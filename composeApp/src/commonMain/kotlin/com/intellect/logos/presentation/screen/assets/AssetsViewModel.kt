@@ -9,7 +9,6 @@ import com.intellect.logos.presentation.screen.assets.AssetsUDF.Action
 import com.intellect.logos.presentation.screen.assets.AssetsUDF.Event
 import com.intellect.logos.presentation.screen.assets.AssetsUDF.State
 import com.intellect.logos.presentation.udf.BaseViewModel
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -63,27 +62,13 @@ class AssetsViewModel(
             .distinctUntilChanged()
             .debounce(500.milliseconds)
             .onEach { query ->
-                updateAssets(query) // TODO add pagination
-            }.launchIn(viewModelScope)
-    }
+                val assets = getAssetsUseCase(query)
 
-    private suspend fun updateAssets(query: String) {
-        getAssetsUseCase(query).onSuccess { assets ->
-            setState {
-                copy(
-                    assets = assets
-                )
-            }
-        }.onFailure {
-            Napier.e(it.message.orEmpty(), it)
-
-            setState {
-                copy(
-                    errorState = State.ErrorState(
-                        message = it.message.orEmpty()
+                setState {
+                    copy(
+                        assets = assets
                     )
-                )
-            }
-        }
+                }
+            }.launchIn(viewModelScope)
     }
 }

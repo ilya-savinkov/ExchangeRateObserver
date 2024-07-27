@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -27,6 +26,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import app.cash.paging.compose.collectAsLazyPagingItems
+import app.cash.paging.compose.itemKey
 import com.intellect.logos.presentation.screen.assets.component.AssetItem
 import exchangerateobserver.composeapp.generated.resources.Res
 import exchangerateobserver.composeapp.generated.resources.clear
@@ -83,8 +84,10 @@ private fun SharedTransitionScope.AssetsContent(
     state: AssetsUDF.State,
     onAction: (AssetsUDF.Action) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
+    val assets = state.assets.collectAsLazyPagingItems()
+
     LazyColumn(
         state = rememberLazyListState(),
         modifier = modifier
@@ -132,9 +135,11 @@ private fun SharedTransitionScope.AssetsContent(
         }
 
         items(
-            items = state.assets,
-            key = { it.currency.code }
-        ) { asset ->
+            count = assets.itemCount,
+            key = assets.itemKey { it.currency.code }
+        ) {
+            val asset = assets[it] ?: return@items
+
             AssetItem(
                 asset = asset,
                 searchQuery = state.searchState.query,

@@ -9,13 +9,11 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.intellect.logos.domain.model.Asset
@@ -47,15 +45,9 @@ fun SharedTransitionScope.AssetItem(
             )
         },
         supportingContent = {
-            val description = remember(Locale.current.language) {
-                asset.currency.description.getOrElse(Locale.current.language) {
-                    asset.currency.description.getValue("en")
-                }
-            }
-
             Text(
                 text = buildHighlightAnnotatedString(
-                    fullText = description,
+                    fullText = asset.currency.description,
                     highlightText = searchQuery,
                     highlightColor = MaterialTheme.colorScheme.primary
                 )
@@ -67,6 +59,7 @@ fun SharedTransitionScope.AssetItem(
                 contentDescription = asset.currency.code,
                 modifier = Modifier
                     .size(48.dp)
+                    // TODO Анимация только для выбранного элемента
                     .sharedElement(
                         state = rememberSharedContentState(asset.icon),
                         animatedVisibilityScope = animatedVisibilityScope

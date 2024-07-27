@@ -1,69 +1,60 @@
 package com.intellect.logos.data.repository
 
-import ServerConstant
-import androidx.compose.ui.text.intl.Locale
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
+import com.intellect.logos.data.datasource.AssetLocalDataSource
+import com.intellect.logos.data.datasource.AssetRemoteDataSource
+import com.intellect.logos.data.db.entity.AssetEntity
+import com.intellect.logos.data.mapper.toDomain
+import com.intellect.logos.data.mapper.toEntities
 import com.intellect.logos.domain.model.Asset
-import com.intellect.logos.domain.model.Country
-import com.intellect.logos.domain.model.Currency
 import com.intellect.logos.domain.repository.AssetsRepository
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import response.AssetResponse
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class AssetsRepositoryImpl(private val httpClient: HttpClient) : AssetsRepository {
-
-    private val assetsMap: MutableMap<String, Asset> = mutableMapOf()
-    private val mutex: Mutex = Mutex()
-
-    override suspend fun getAssets(query: String): Result<List<Asset>> = loadAssets().map { assets ->
-        // TODO add pagination
-        assets
-            .filterValues { asset ->
-                val currencyCode = asset.currency.code
-                val currencyDescription = asset.currency.description.getOrElse(Locale.current.language) {
-                    asset.currency.description.getValue("en")
-                }
-
-                currencyCode.contains(query, true) || currencyDescription.contains(query, true)
-            }
-            .values
-            .toList()
+class AssetsRepositoryImpl(
+    private val assetRemoteDataSource: AssetRemoteDataSource,
+    private val assetLocalDataSource: AssetLocalDataSource
+) : AssetsRepository {
+    companion object {
+        private const val PAGE_SIZE = 20
     }
 
-    override suspend fun getAsset(name: String): Result<Asset> = loadAssets().map {
-        it.getValue(name)
-    }
-
-    private suspend fun loadAssets(): Result<Map<String, Asset>> = runCatching {
-        // TODO add caching
-        assetsMap.ifEmpty {
-            mutex.withLock {
-                val assets = httpClient.get("assets")
-                    .body<List<AssetResponse>>()
-                    .map {
-                        Asset(
-                            icon = "${ServerConstant.URL}/${it.icon}".encodeURLPathPart(),
-                            volume = "1",
-                            currency = Currency(
-                                code = it.currency.code,
-                                description = it.currency.description
-                            ),
-                            country = Country(
-                                code = it.country.code,
-                                description = it.country.description
-                            )
-                        )
-                    }
-
-                assetsMap.apply {
-                    clear()
-                    putAll(assets.associateBy { it.currency.code })
+    override suspend fun getAssets(query: String): Flow<PagingData<Asset>> {
+        return Pager(
+            config = PagingConfig(PAGE_SIZE),
+            pagingSourceFactory = {
+                if (query.isBlank()) {
+                    assetLocalDataSource.getAssets()
+                } else {
+                    assetLocalDataSource.search(query)
                 }
             }
+        ).flow.map { pagingData ->
+            pagingData.map(AssetEntity::toDomain)
         }
+    }
+
+    override suspend fun getAsset(name: String): Asset {
+        return assetLocalDataSource.getAsset(name).toDomain()
+    }
+
+    override suspend fun getDefaultAssets(): Pair<Asset, Asset> {
+        return assetLocalDataSource.getDefaultAssets().let { (from, to) ->
+            Pair(
+                assetLocalDataSource.getAsset(from).toDomain(),
+                assetLocalDataSource.getAsset(to).toDomain()
+            )
+        }
+    }
+
+    // TODO Использовать кеш, если данные уже загружены
+    // TODO Обновлять кеш каждую неделю
+    override suspend fun loadAssets(): Result<Unit> = runCatching {
+        assetLocalDataSource.clearAll()
+        val assetEntities = assetRemoteDataSource.getAssets().toEntities()
+        assetLocalDataSource.saveAssets(assetEntities)
     }
 }

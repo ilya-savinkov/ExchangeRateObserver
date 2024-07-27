@@ -1,14 +1,18 @@
 [versions]
-agp = "8.5.0"
-androidx-activityCompose = "1.9.0"
-androidx-lifecycle-viewmodel = "2.8.3"
-compose = "1.7.0-beta04"
+agp = "8.5.1"
+androidx-activityCompose = "1.9.1"
+androidx-lifecycle-viewmodel = "2.8.4"
+androidx-paging = "3.3.0-alpha02-0.5.1"
+compose = "1.7.0-beta06"
 compose-plugin = "1.7.0-alpha01"
 compose-navigation = "2.8.0-alpha08"
+ksp = "2.0.0-1.0.23"
 kotlin = "2.0.0"
 kotlin-coroutines = "1.8.1"
 kotlin-serialization = "1.7.0"
 ktor = "2.3.11"
+room = "2.7.0-alpha05"
+sqlite-bundled = "2.5.0-alpha05"
 logback = "1.5.6"
 kamel = "0.9.4"
 koin = "3.5.6"
@@ -21,6 +25,7 @@ kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-j
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle-viewmodel" }
+androidx-paging-common = { module = "app.cash.paging:paging-compose-common", version.ref = "androidx-paging" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
@@ -35,6 +40,10 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-runtime-android = { module = "androidx.room:room-runtime-android", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite-bundled" }
 
 # Server
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -53,6 +62,8 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+room = { id = "androidx.room", version.ref = "room" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

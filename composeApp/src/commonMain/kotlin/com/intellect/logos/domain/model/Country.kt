@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Country(
     val code: String,
-    val description: Map<String, String>,
+    val description: String,
 )
 
 fun Country.Companion.empty() = Country(
     code = "US",
-    description = emptyMap(),
+    description = "United States",
 )
