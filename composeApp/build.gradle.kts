@@ -71,6 +71,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.paging.common)
 
+            implementation(libs.datastore)
+            implementation(libs.datastore.preferences)
+
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
 

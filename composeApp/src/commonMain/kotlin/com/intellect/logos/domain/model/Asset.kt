@@ -7,7 +7,12 @@ data class Asset(
     val icon: String,
     val currency: Currency,
     val country: Country,
-)
+) {
+    enum class Type {
+        Base,
+        Quote
+    }
+}
 
 fun Asset.Companion.empty() = Asset(
     icon = "",

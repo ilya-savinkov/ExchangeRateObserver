@@ -1,4 +1,4 @@
-package com.intellect.logos.presentation.ui.placeholder
+package com.intellect.logos.common.presentation.ui.placeholder
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn

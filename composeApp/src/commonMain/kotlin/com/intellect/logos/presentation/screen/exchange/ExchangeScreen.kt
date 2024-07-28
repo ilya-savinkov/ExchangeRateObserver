@@ -22,12 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.intellect.logos.domain.model.Asset
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.Action
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.State
 import com.intellect.logos.presentation.screen.exchange.component.AssetInputComponent
 import com.intellect.logos.presentation.screen.exchange.component.KeyboardComponent
 import com.intellect.logos.presentation.screen.exchange.component.RateComponent
-import com.intellect.logos.presentation.screen.exchange.model.AssetType
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -80,13 +80,14 @@ private fun SharedTransitionScope.ExchangeRateContent(
         // TODO Add third asset
 
         AssetInputComponent(
+            volume = state.volume,
             asset = state.baseAsset,
             isLoading = state.isLoadingAssets,
             onClick = {
                 onAction(
                     Action.TapAsset(
                         asset = state.baseAsset,
-                        assetType = AssetType.Base
+                        type = Asset.Type.Base
                     )
                 )
             },
@@ -105,13 +106,14 @@ private fun SharedTransitionScope.ExchangeRateContent(
         )
 
         AssetInputComponent(
+            volume = state.convertedVolume,
             asset = state.quoteAsset,
             isLoading = state.isLoadingAssets,
             onClick = {
                 onAction(
                     Action.TapAsset(
                         asset = state.quoteAsset,
-                        assetType = AssetType.Quote
+                        type = Asset.Type.Quote
                     )
                 )
             },

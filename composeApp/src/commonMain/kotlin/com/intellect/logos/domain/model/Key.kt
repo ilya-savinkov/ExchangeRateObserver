@@ -1,4 +1,4 @@
-package com.intellect.logos.presentation.screen.exchange.model
+package com.intellect.logos.domain.model
 
 sealed class Key {
     data class Number(val value: Int) : Key()

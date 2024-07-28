@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.intellect.logos.common.presentation.ui.placeholder.PlaceholderBox
 import com.intellect.logos.domain.model.Asset
-import com.intellect.logos.presentation.ui.placeholder.PlaceholderBox
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.ktor.http.decodeURLPart
@@ -27,6 +27,7 @@ import io.ktor.http.decodeURLPart
 @Composable
 fun SharedTransitionScope.AssetInputComponent(
     asset: Asset,
+    volume: String,
     isLoading: Boolean,
     onClick: (asset: Asset) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -75,11 +76,12 @@ fun SharedTransitionScope.AssetInputComponent(
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // TODO Уменьшать поле при большом количестве символов
             Text(
-//                text = asset.volume,
-                text = "0.0",
+                text = volume,
                 style = MaterialTheme.typography.displayMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1
             )
         }
     }

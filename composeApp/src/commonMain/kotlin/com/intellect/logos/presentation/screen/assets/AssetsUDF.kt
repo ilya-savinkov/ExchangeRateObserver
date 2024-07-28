@@ -1,8 +1,8 @@
 package com.intellect.logos.presentation.screen.assets
 
 import androidx.paging.PagingData
+import com.intellect.logos.common.presentation.udf.UDF
 import com.intellect.logos.domain.model.Asset
-import com.intellect.logos.presentation.udf.UDF
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 

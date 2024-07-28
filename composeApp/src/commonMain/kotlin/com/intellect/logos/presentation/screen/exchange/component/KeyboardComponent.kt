@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.intellect.logos.presentation.screen.exchange.model.Key
+import com.intellect.logos.domain.model.Key
 import com.intellect.logos.presentation.theme.CustomIcon
 import com.intellect.logos.presentation.theme.customicon.Backspace
 

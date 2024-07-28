@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface AssetsRepository {
     suspend fun getAssets(query: String): Flow<PagingData<Asset>>
     suspend fun getAsset(name: String): Asset
-    suspend fun getDefaultAssets(): Pair<Asset, Asset>
+    suspend fun setDefaultAsset(asset: String, type: Asset.Type)
+    suspend fun getDefaultAssets(): Flow<Pair<Asset, Asset>>
     suspend fun loadAssets(): Result<Unit>
 }

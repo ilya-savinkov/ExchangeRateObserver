@@ -1,4 +1,4 @@
-package com.intellect.logos.presentation.extension
+package com.intellect.logos.common.presentation.navigation
 
 import androidx.navigation.NavController
 import com.intellect.logos.defaultJson
@@ -7,15 +7,15 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 
-inline fun <reified T> NavController.navigate(
+inline fun NavController.navigate(
     route: String,
-    vararg argument: Pair<String, T>,
+    vararg argument: Pair<String, String>,
 ) {
     navigate(route)
 
     currentBackStackEntry?.savedStateHandle?.apply {
         argument.forEach { (key, value) ->
-            set(key, defaultJson.encodeToString(value))
+            set(key, value)
         }
     }
 }

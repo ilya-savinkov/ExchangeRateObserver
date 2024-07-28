@@ -1,10 +1,9 @@
 package com.intellect.logos.presentation.screen.exchange
 
+import com.intellect.logos.common.presentation.udf.UDF
 import com.intellect.logos.domain.model.Asset
+import com.intellect.logos.domain.model.Key
 import com.intellect.logos.domain.model.Rate
-import com.intellect.logos.presentation.screen.exchange.model.AssetType
-import com.intellect.logos.presentation.screen.exchange.model.Key
-import com.intellect.logos.presentation.udf.UDF
 
 object ExchangeUDF {
     data class State(
@@ -12,11 +11,14 @@ object ExchangeUDF {
         val isLoadingRate: Boolean,
         val baseAsset: Asset,
         val quoteAsset: Asset,
+        val volume: String,
+        val convertedVolume: String,
+        // TODO Использовать примитивные типы
         val rate: Rate
     ) : UDF.State
 
     sealed interface Action : UDF.Action {
-        data class TapAsset(val asset: Asset, val assetType: AssetType) : Action
+        data class TapAsset(val asset: Asset, val type: Asset.Type) : Action
         data class TapKey(val key: Key) : Action
         data object Swap : Action
     }

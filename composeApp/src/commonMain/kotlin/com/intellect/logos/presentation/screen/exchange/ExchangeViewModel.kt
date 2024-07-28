@@ -1,25 +1,31 @@
 package com.intellect.logos.presentation.screen.exchange
 
 import androidx.lifecycle.viewModelScope
+import com.intellect.logos.common.format
+import com.intellect.logos.common.presentation.udf.BaseViewModel
 import com.intellect.logos.domain.model.Asset
+import com.intellect.logos.domain.model.Key
 import com.intellect.logos.domain.model.Rate
 import com.intellect.logos.domain.model.empty
 import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
-import com.intellect.logos.domain.usecase.rates.GetExchangeRatesUseCase
+import com.intellect.logos.domain.usecase.rates.GetRatesUseCase
+import com.intellect.logos.domain.usecase.volume.CalculateVolumeUseCase
+import com.intellect.logos.domain.usecase.volume.GetVolumeUseCase
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.Action
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.Event
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.State
-import com.intellect.logos.presentation.screen.exchange.model.AssetType
-import com.intellect.logos.presentation.screen.exchange.model.Key
-import com.intellect.logos.presentation.udf.BaseViewModel
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class ExchangeViewModel(
     private val loadAssetsUseCase: LoadAssetsUseCase,
     private val getDefaultAssetsUseCase: GetDefaultAssetsUseCase,
-    private val getExchangeRatesUseCase: GetExchangeRatesUseCase,
+    private val getVolumeUseCase: GetVolumeUseCase,
+    private val calculateVolumeUseCase: CalculateVolumeUseCase,
+    private val getRatesUseCase: GetRatesUseCase,
     private val exchangeRouter: ExchangeRouter,
 ) : BaseViewModel<State, Action, Event>(
     initialState = State(
@@ -27,6 +33,8 @@ class ExchangeViewModel(
         isLoadingRate = true,
         baseAsset = Asset.empty(),
         quoteAsset = Asset.empty(),
+        volume = "1",
+        convertedVolume = "1",
         rate = Rate.empty()
     )
 ) {
@@ -37,16 +45,15 @@ class ExchangeViewModel(
     init {
         viewModelScope.launch {
             loadAssetsUseCase().onSuccess {
-                val (fromAsset, toAsset) = getDefaultAssetsUseCase()
-
                 setState {
                     copy(
                         isLoadingAssets = false,
-                        isLoadingRate = false,
-                        baseAsset = fromAsset,
-                        quoteAsset = toAsset
+                        isLoadingRate = false
                     )
                 }
+
+                subscribeAssets()
+                subscribeVolume()
             }.onFailure {
                 Napier.e(it) { "ExchangeRateViewModel" }
                 // TODO show snackbar
@@ -54,56 +61,67 @@ class ExchangeViewModel(
         }
     }
 
+    private suspend fun subscribeAssets() {
+        getDefaultAssetsUseCase().onEach { (fromAsset, toAsset) ->
+            val fromAssetName = fromAsset.currency.code
+            val toAssetName = toAsset.currency.code
+
+            getRatesUseCase(
+                from = fromAssetName,
+                to = toAssetName
+            ).onSuccess { rate ->
+                setState {
+                    copy(
+                        baseAsset = fromAsset,
+                        quoteAsset = toAsset,
+                        rate = Rate(
+                            assets = fromAssetName to toAssetName,
+                            volume = rate
+                        )
+                    )
+                }
+            }.onFailure {
+                Napier.e(it) { "ExchangeRateViewModel" }
+                // TODO show snackbar
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeVolume() {
+        getVolumeUseCase().onEach { volume ->
+            getRatesUseCase(
+                from = currentState.baseAsset.currency.code,
+                to = currentState.quoteAsset.currency.code
+            ).onSuccess { rate ->
+                setState {
+                    copy(
+                        volume = volume,
+                        convertedVolume = (volume.toDouble() * rate).format(2)
+                    )
+                }
+            }.onFailure {
+                Napier.e(it) { "ExchangeRateViewModel" }
+                // TODO show snackbar
+            }
+        }.launchIn(viewModelScope)
+    }
+
     override suspend fun reduce(action: Action) {
         when (action) {
-            is Action.TapAsset -> tapAsset(action.asset, action.assetType)
+            is Action.TapAsset -> tapAsset(action.asset, action.type)
             is Action.TapKey -> tapKey(action.key)
             Action.Swap -> swap()
         }
     }
 
-    private fun tapKey(key: Key) {
+    private suspend fun tapKey(key: Key) {
         if (currentState.isLoadingAssets) return
 
-//        setState {
-//            val prevVolume = if (baseAsset.volume.startsWith("0.")) {
-//                baseAsset.volume
-//            } else {
-//                baseAsset.volume.trimStart('0')
-//            }
-//
-//            val newVolume = when (key) {
-//                Key.Backspace -> prevVolume.dropLast(1)
-//
-//                is Key.Number -> if (prevVolume.contains('.')) {
-//                    val decimal = prevVolume.split('.').last().length
-//
-//                    if (decimal == 2) {
-//                        prevVolume
-//                    } else {
-//                        prevVolume + key.value.toString()
-//                    }
-//                } else {
-//                    prevVolume + key.value.toString()
-//                }
-//
-//                Key.Dot -> if (prevVolume.contains('.') || baseAsset.currency.isJPY) {
-//                    prevVolume
-//                } else {
-//                    if (prevVolume.isEmpty()) {
-//                        "0."
-//                    } else {
-//                        "$prevVolume."
-//                    }
-//                }
-//            }.take(10)
-//
-//            copy(
-//                baseAsset = baseAsset.copy(
-//                    volume = newVolume.ifEmpty { "0" }
-//                )
-//            )
-//        }
+        calculateVolumeUseCase(
+            volume = currentState.volume,
+            key = key,
+            currency = currentState.baseAsset.currency
+        )
     }
 
     private fun swap() {
@@ -117,36 +135,12 @@ class ExchangeViewModel(
         }
     }
 
-    private fun tapAsset(asset: Asset, assetType: AssetType) {
+    private fun tapAsset(asset: Asset, type: Asset.Type) {
         if (currentState.isLoadingAssets) return
 
-        viewModelScope.launch {
-            exchangeRouter.openAssets(asset) { selectedAsset ->
-                changeAsset(
-                    asset = selectedAsset,
-                    assetType = assetType
-                )
-            }
-        }
-    }
-
-    private fun changeAsset(asset: Asset, assetType: AssetType) {
-        setState {
-            when (assetType) {
-                AssetType.Base -> {
-                    copy(
-                        baseAsset = asset,
-                        quoteAsset = if (quoteAsset == asset) baseAsset else quoteAsset
-                    )
-                }
-
-                AssetType.Quote -> {
-                    copy(
-                        baseAsset = if (baseAsset == asset) quoteAsset else baseAsset,
-                        quoteAsset = asset
-                    )
-                }
-            }
-        }
+        exchangeRouter.openAssets(
+            selectedAsset = asset,
+            type = type
+        )
     }
 }
