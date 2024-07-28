@@ -35,5 +35,6 @@ actual class KoinInitializer(private val context: Context) {
 }
 
 actual val platformModule: Module = module {
-    factory { getDatabaseBuilder(androidContext()) }
+    single { getDatabaseBuilder(androidContext()) }
+    single { createDataStore(androidContext()) }
 }

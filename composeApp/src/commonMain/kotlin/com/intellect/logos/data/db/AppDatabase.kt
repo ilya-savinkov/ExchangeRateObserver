@@ -2,8 +2,11 @@ package com.intellect.logos.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.intellect.logos.data.db.dao.AssetDao
 import com.intellect.logos.data.db.entity.AssetEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 
 @Database(
     entities = [AssetEntity::class],
@@ -22,4 +25,12 @@ abstract class AppDatabase : RoomDatabase(), DB {
 // Class 'AppDatabase_Impl' is not abstract and does not implement abstract base class member 'clearAllTables'.
 private interface DB {
     fun clearAllTables() {}
+}
+
+fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase {
+    return builder
+        .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
+        .setDriver(BundledSQLiteDriver())
+        .setQueryCoroutineContext(Dispatchers.IO)
+        .build()
 }

@@ -1,4 +1,4 @@
-package com.intellect.logos.presentation.udf
+package com.intellect.logos.common.presentation.udf
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

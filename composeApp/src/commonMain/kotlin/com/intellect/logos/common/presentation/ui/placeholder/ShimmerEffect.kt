@@ -1,4 +1,4 @@
-package com.intellect.logos.presentation.ui.placeholder
+package com.intellect.logos.common.presentation.ui.placeholder
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode

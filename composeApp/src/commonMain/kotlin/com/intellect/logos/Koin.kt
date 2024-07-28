@@ -6,19 +6,25 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.intellect.logos.data.datasource.AssetLocalDataSource
-import com.intellect.logos.data.datasource.AssetRemoteDataSource
+import com.intellect.logos.data.datasource.asset.AssetLocalDataSource
+import com.intellect.logos.data.datasource.asset.AssetRemoteDataSource
+import com.intellect.logos.data.datasource.exchange.ExchangeLocalDataSource
+import com.intellect.logos.data.datasource.exchange.ExchangeRemoteDataSource
 import com.intellect.logos.data.db.AppDatabase
 import com.intellect.logos.data.db.dao.AssetDao
+import com.intellect.logos.data.db.getRoomDatabase
 import com.intellect.logos.data.repository.AssetsRepositoryImpl
-import com.intellect.logos.data.repository.ExchangeRatesRepositoryImpl
+import com.intellect.logos.data.repository.ExchangeRepositoryImpl
 import com.intellect.logos.domain.repository.AssetsRepository
-import com.intellect.logos.domain.repository.ExchangeRatesRepository
+import com.intellect.logos.domain.repository.ExchangeRepository
 import com.intellect.logos.domain.usecase.assets.GetAssetUseCase
 import com.intellect.logos.domain.usecase.assets.GetAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
-import com.intellect.logos.domain.usecase.rates.GetExchangeRatesUseCase
+import com.intellect.logos.domain.usecase.assets.SetDefaultAssetUseCase
+import com.intellect.logos.domain.usecase.rates.GetRatesUseCase
+import com.intellect.logos.domain.usecase.volume.CalculateVolumeUseCase
+import com.intellect.logos.domain.usecase.volume.GetVolumeUseCase
 import com.intellect.logos.presentation.router.AssetsRouterImpl
 import com.intellect.logos.presentation.router.ExchangeRouterImpl
 import com.intellect.logos.presentation.screen.assets.AssetsRouter
@@ -46,8 +52,12 @@ expect val platformModule: Module
 
 // TODO Перейти на использование аннотаций
 val exchangeRateModule: Module = module {
-    singleOf(::ExchangeRatesRepositoryImpl) bind ExchangeRatesRepository::class
-    factoryOf(::GetExchangeRatesUseCase)
+    singleOf(::ExchangeRemoteDataSource)
+    singleOf(::ExchangeLocalDataSource)
+    singleOf(::ExchangeRepositoryImpl) bind ExchangeRepository::class
+    factoryOf(::GetRatesUseCase)
+    factoryOf(::CalculateVolumeUseCase)
+    factoryOf(::GetVolumeUseCase)
     factoryOf(::ExchangeRouterImpl) bind ExchangeRouter::class
 }
 
@@ -59,6 +69,7 @@ val assetsModule: Module = module {
     factoryOf(::GetAssetUseCase)
     factoryOf(::LoadAssetsUseCase)
     factoryOf(::GetDefaultAssetsUseCase)
+    factoryOf(::SetDefaultAssetUseCase)
     factoryOf(::AssetsRouterImpl) bind AssetsRouter::class
 }
 

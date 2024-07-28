@@ -4,8 +4,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.intellect.logos.data.datasource.AssetLocalDataSource
-import com.intellect.logos.data.datasource.AssetRemoteDataSource
+import com.intellect.logos.data.datasource.asset.AssetLocalDataSource
+import com.intellect.logos.data.datasource.asset.AssetRemoteDataSource
 import com.intellect.logos.data.db.entity.AssetEntity
 import com.intellect.logos.data.mapper.toDomain
 import com.intellect.logos.data.mapper.toEntities
@@ -41,8 +41,15 @@ class AssetsRepositoryImpl(
         return assetLocalDataSource.getAsset(name).toDomain()
     }
 
-    override suspend fun getDefaultAssets(): Pair<Asset, Asset> {
-        return assetLocalDataSource.getDefaultAssets().let { (from, to) ->
+    override suspend fun setDefaultAsset(asset: String, type: Asset.Type) {
+        assetLocalDataSource.setDefaultAsset(
+            asset = asset,
+            type = type
+        )
+    }
+
+    override suspend fun getDefaultAssets(): Flow<Pair<Asset, Asset>> {
+        return assetLocalDataSource.getDefaultAssets().map { (from, to) ->
             Pair(
                 assetLocalDataSource.getAsset(from).toDomain(),
                 assetLocalDataSource.getAsset(to).toDomain()

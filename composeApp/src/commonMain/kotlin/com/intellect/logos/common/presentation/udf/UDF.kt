@@ -1,4 +1,4 @@
-package com.intellect.logos.presentation.udf
+package com.intellect.logos.common.presentation.udf
 
 object UDF {
     interface Action

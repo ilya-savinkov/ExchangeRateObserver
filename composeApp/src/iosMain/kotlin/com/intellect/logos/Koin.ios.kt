@@ -29,5 +29,6 @@ actual class KoinInitializer {
 }
 
 actual val platformModule: Module = module {
-    factory { getDatabaseBuilder() }
+    single { getDatabaseBuilder() }
+    single { createDataStore() }
 }

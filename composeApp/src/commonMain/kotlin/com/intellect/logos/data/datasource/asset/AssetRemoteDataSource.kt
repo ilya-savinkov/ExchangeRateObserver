@@ -1,4 +1,4 @@
-package com.intellect.logos.data.datasource
+package com.intellect.logos.data.datasource.asset
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
