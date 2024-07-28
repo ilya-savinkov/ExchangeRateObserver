@@ -5,5 +5,5 @@ import com.intellect.logos.domain.repository.AssetsRepository
 
 class GetAssetUseCase(private val assetsRepository: AssetsRepository) {
 
-    suspend operator fun invoke(name: String): Result<Asset> = assetsRepository.getAsset(name)
+    suspend operator fun invoke(name: String): Asset = assetsRepository.getAsset(name)
 }

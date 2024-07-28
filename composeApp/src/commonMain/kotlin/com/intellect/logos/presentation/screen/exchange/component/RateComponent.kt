@@ -1,7 +1,5 @@
 package com.intellect.logos.presentation.screen.exchange.component
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,15 +18,15 @@ fun RateComponent(
         height = 20.dp,
         modifier = modifier
     ) {
-        Text(
-            text = buildString {
-                append("${rate.baseAsset.volume} ${rate.baseAsset.currency.code}")
-                append(" = ")
-                append("${rate.quoteAsset.volume} ${rate.quoteAsset.currency.code}")
-            },
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier
-        )
+//        Text(
+//            text = buildString {
+//                append("${rate.baseAsset.volume} ${rate.baseAsset.currency.code}")
+//                append(" = ")
+//                append("${rate.quoteAsset.volume} ${rate.quoteAsset.currency.code}")
+//            },
+//            style = MaterialTheme.typography.labelLarge,
+//            color = MaterialTheme.colorScheme.secondary,
+//            modifier = Modifier
+//        )
     }
 }

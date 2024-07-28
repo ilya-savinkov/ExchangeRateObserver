@@ -23,6 +23,8 @@ actual class KoinInitializer(private val context: Context) {
             androidLogger()
 
             modules(
+                platformModule,
+                dbModule,
                 apiModule,
                 exchangeRateModule,
                 assetsModule,
@@ -30,4 +32,8 @@ actual class KoinInitializer(private val context: Context) {
             )
         }
     }
+}
+
+actual val platformModule: Module = module {
+    factory { getDatabaseBuilder(androidContext()) }
 }

@@ -4,7 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.intellect.logos.domain.model.Asset
 import com.intellect.logos.domain.model.Rate
 import com.intellect.logos.domain.model.empty
-import com.intellect.logos.domain.usecase.assets.GetAssetUseCase
+import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
+import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
 import com.intellect.logos.domain.usecase.rates.GetExchangeRatesUseCase
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.Action
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.Event
@@ -13,12 +14,11 @@ import com.intellect.logos.presentation.screen.exchange.model.AssetType
 import com.intellect.logos.presentation.screen.exchange.model.Key
 import com.intellect.logos.presentation.udf.BaseViewModel
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
 
 class ExchangeViewModel(
-    private val getAssetUseCase: GetAssetUseCase,
+    private val loadAssetsUseCase: LoadAssetsUseCase,
+    private val getDefaultAssetsUseCase: GetDefaultAssetsUseCase,
     private val getExchangeRatesUseCase: GetExchangeRatesUseCase,
     private val exchangeRouter: ExchangeRouter,
 ) : BaseViewModel<State, Action, Event>(
@@ -36,31 +36,21 @@ class ExchangeViewModel(
 
     init {
         viewModelScope.launch {
-            setDefaultAssets()
-        }
-    }
+            loadAssetsUseCase().onSuccess {
+                val (fromAsset, toAsset) = getDefaultAssetsUseCase()
 
-    private suspend fun setDefaultAssets() {
-        val fromAsset = getAssetUseCase("EUR").onFailure {
-            Napier.e(it) { "ExchangeRateViewModel" }
-            // TODO show snackbar
-        }.getOrNull() ?: return
-
-
-        val toAsset = getAssetUseCase("USD").onFailure {
-            Napier.e(it) { "ExchangeRateViewModel" }
-            // TODO show snackbar
-        }.getOrNull() ?: return
-
-        delay(5.seconds)
-
-        setState {
-            copy(
-                isLoadingAssets = false,
-                isLoadingRate = false,
-                baseAsset = fromAsset,
-                quoteAsset = toAsset
-            )
+                setState {
+                    copy(
+                        isLoadingAssets = false,
+                        isLoadingRate = false,
+                        baseAsset = fromAsset,
+                        quoteAsset = toAsset
+                    )
+                }
+            }.onFailure {
+                Napier.e(it) { "ExchangeRateViewModel" }
+                // TODO show snackbar
+            }
         }
     }
 
@@ -75,45 +65,45 @@ class ExchangeViewModel(
     private fun tapKey(key: Key) {
         if (currentState.isLoadingAssets) return
 
-        setState {
-            val prevVolume = if (baseAsset.volume.startsWith("0.")) {
-                baseAsset.volume
-            } else {
-                baseAsset.volume.trimStart('0')
-            }
-
-            val newVolume = when (key) {
-                Key.Backspace -> prevVolume.dropLast(1)
-
-                is Key.Number -> if (prevVolume.contains('.')) {
-                    val decimal = prevVolume.split('.').last().length
-
-                    if (decimal == 2) {
-                        prevVolume
-                    } else {
-                        prevVolume + key.value.toString()
-                    }
-                } else {
-                    prevVolume + key.value.toString()
-                }
-
-                Key.Dot -> if (prevVolume.contains('.') || baseAsset.currency.isJPY) {
-                    prevVolume
-                } else {
-                    if (prevVolume.isEmpty()) {
-                        "0."
-                    } else {
-                        "$prevVolume."
-                    }
-                }
-            }.take(10)
-
-            copy(
-                baseAsset = baseAsset.copy(
-                    volume = newVolume.ifEmpty { "0" }
-                )
-            )
-        }
+//        setState {
+//            val prevVolume = if (baseAsset.volume.startsWith("0.")) {
+//                baseAsset.volume
+//            } else {
+//                baseAsset.volume.trimStart('0')
+//            }
+//
+//            val newVolume = when (key) {
+//                Key.Backspace -> prevVolume.dropLast(1)
+//
+//                is Key.Number -> if (prevVolume.contains('.')) {
+//                    val decimal = prevVolume.split('.').last().length
+//
+//                    if (decimal == 2) {
+//                        prevVolume
+//                    } else {
+//                        prevVolume + key.value.toString()
+//                    }
+//                } else {
+//                    prevVolume + key.value.toString()
+//                }
+//
+//                Key.Dot -> if (prevVolume.contains('.') || baseAsset.currency.isJPY) {
+//                    prevVolume
+//                } else {
+//                    if (prevVolume.isEmpty()) {
+//                        "0."
+//                    } else {
+//                        "$prevVolume."
+//                    }
+//                }
+//            }.take(10)
+//
+//            copy(
+//                baseAsset = baseAsset.copy(
+//                    volume = newVolume.ifEmpty { "0" }
+//                )
+//            )
+//        }
     }
 
     private fun swap() {

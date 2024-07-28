@@ -1,12 +1,15 @@
 package com.intellect.logos.presentation.screen.assets
 
+import androidx.paging.PagingData
 import com.intellect.logos.domain.model.Asset
 import com.intellect.logos.presentation.udf.UDF
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 object AssetsUDF {
 
     data class State(
-        val assets: List<Asset> = emptyList(),
+        val assets: Flow<PagingData<Asset>> = emptyFlow(),
         val selectedAsset: Asset,
         val searchState: SearchState = SearchState(),
         val errorState: ErrorState? = null,

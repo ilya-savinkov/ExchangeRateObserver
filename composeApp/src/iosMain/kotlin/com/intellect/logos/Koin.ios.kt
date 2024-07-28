@@ -17,6 +17,8 @@ actual class KoinInitializer {
     actual fun init() {
         startKoin {
             modules(
+                platformModule,
+                dbModule,
                 apiModule,
                 exchangeRateModule,
                 assetsModule,
@@ -24,4 +26,8 @@ actual class KoinInitializer {
             )
         }
     }
+}
+
+actual val platformModule: Module = module {
+    factory { getDatabaseBuilder() }
 }

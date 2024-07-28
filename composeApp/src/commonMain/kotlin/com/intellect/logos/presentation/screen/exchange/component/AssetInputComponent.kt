@@ -76,7 +76,8 @@ fun SharedTransitionScope.AssetInputComponent(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = asset.volume,
+//                text = asset.volume,
+                text = "0.0",
                 style = MaterialTheme.typography.displayMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
