@@ -30,7 +30,10 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import app.cash.paging.compose.itemKey
 import com.intellect.logos.presentation.screen.assets.component.AssetItem
 import exchangerateobserver.composeapp.generated.resources.Res
+import exchangerateobserver.composeapp.generated.resources.assets
+import exchangerateobserver.composeapp.generated.resources.back
 import exchangerateobserver.composeapp.generated.resources.clear
+import exchangerateobserver.composeapp.generated.resources.search
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -48,7 +51,7 @@ fun SharedTransitionScope.AssetsScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Assets" // TODO get from resources
+                        text = stringResource(Res.string.assets),
                     )
                 },
                 navigationIcon = {
@@ -57,7 +60,7 @@ fun SharedTransitionScope.AssetsScreen(
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Back" // TODO get from resources
+                            contentDescription = stringResource(Res.string.back)
                         )
                     }
                 }
@@ -94,6 +97,7 @@ private fun SharedTransitionScope.AssetsContent(
     ) {
         stickyHeader {
             // TODO search currency by photo
+            // TODO Заменить на обычный TextField
             SearchBar(
                 query = state.searchState.query,
                 onQueryChange = {
@@ -103,12 +107,12 @@ private fun SharedTransitionScope.AssetsContent(
                 active = false,
                 onActiveChange = {},
                 placeholder = {
-                    Text("Search") // TODO get from resources
+                    Text(stringResource(Res.string.search))
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search" // TODO get from resources
+                        contentDescription = stringResource(Res.string.search)
                     )
                 },
                 trailingIcon = {

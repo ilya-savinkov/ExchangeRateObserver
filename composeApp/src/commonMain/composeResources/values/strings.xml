@@ -3,4 +3,8 @@
     <string name="settings">Settings</string>
     <string name="search">Search</string>
     <string name="clear">Clear</string>
+    <string name="assets">Assets</string>
+    <string name="back">Back</string>
+    <string name="failed_to_load_assets">Failed to load assets</string>
+    <string name="failed_to_load_rate">Failed to load rate</string>
 </resources>

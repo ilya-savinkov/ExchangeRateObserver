@@ -15,10 +15,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,6 +32,15 @@ import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.State
 import com.intellect.logos.presentation.screen.exchange.component.AssetInputComponent
 import com.intellect.logos.presentation.screen.exchange.component.KeyboardComponent
 import com.intellect.logos.presentation.screen.exchange.component.RateComponent
+import exchangerateobserver.composeapp.generated.resources.Res
+import exchangerateobserver.composeapp.generated.resources.exchange
+import exchangerateobserver.composeapp.generated.resources.failed_to_load_assets
+import exchangerateobserver.composeapp.generated.resources.failed_to_load_rate
+import exchangerateobserver.composeapp.generated.resources.settings
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -36,13 +49,32 @@ fun SharedTransitionScope.ExchangeScreen(
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val state by viewModel.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.onEach { event ->
+            when (event) {
+                is ExchangeUDF.Event.FailedToLoadAssets -> {
+                    snackbarHostState.showSnackbar(
+                        message = getString(Res.string.failed_to_load_assets)
+                    )
+                }
+
+                is ExchangeUDF.Event.FailedToLoadRate -> {
+                    snackbarHostState.showSnackbar(
+                        message = getString(Res.string.failed_to_load_rate)
+                    )
+                }
+            }
+        }.launchIn(this)
+    }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Exchange" // TODO get from resources
+                        text = stringResource(Res.string.exchange)
                     )
                 },
                 actions = {
@@ -51,11 +83,14 @@ fun SharedTransitionScope.ExchangeScreen(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings" // TODO get from resources
+                            contentDescription = stringResource(Res.string.settings)
                         )
                     }
                 }
             )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         },
         modifier = Modifier.fillMaxSize()
     ) { padding ->
