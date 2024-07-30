@@ -3,7 +3,10 @@ package com.intellect.logos.presentation.screen.exchange
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -36,10 +39,13 @@ import exchangerateobserver.composeapp.generated.resources.Res
 import exchangerateobserver.composeapp.generated.resources.exchange
 import exchangerateobserver.composeapp.generated.resources.failed_to_load_assets
 import exchangerateobserver.composeapp.generated.resources.failed_to_load_rate
+import exchangerateobserver.composeapp.generated.resources.ic_swap
 import exchangerateobserver.composeapp.generated.resources.settings
+import exchangerateobserver.composeapp.generated.resources.swap
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -130,15 +136,32 @@ private fun SharedTransitionScope.ExchangeRateContent(
             modifier = Modifier.padding(16.dp)
         )
 
-        // TODO swap button
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // TODO Добавить анимацию свапа для активов
+            Icon(
+                painter = painterResource(Res.drawable.ic_swap),
+                contentDescription = stringResource(Res.string.swap),
+                modifier = Modifier
+                    .padding(start = 24.dp)
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null,
+                        onClick = {
+                            onAction(Action.Swap)
+                        }
+                    )
+            )
 
-        RateComponent(
-            rate = state.rate,
-            isLoading = state.isLoadingRate,
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .align(Alignment.End)
-        )
+            Spacer(modifier = Modifier.weight(1f))
+
+            RateComponent(
+                rate = state.rate,
+                isLoading = state.isLoadingRate,
+                modifier = Modifier.padding(end = 16.dp)
+            )
+        }
 
         AssetInputComponent(
             volume = state.convertedVolume,
