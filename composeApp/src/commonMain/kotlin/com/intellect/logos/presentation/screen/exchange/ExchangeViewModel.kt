@@ -56,7 +56,7 @@ class ExchangeViewModel(
                 subscribeVolume()
             }.onFailure {
                 Napier.e(it) { "ExchangeRateViewModel" }
-                // TODO show snackbar
+                sendEvent(Event.FailedToLoadAssets)
             }
         }
     }
@@ -82,7 +82,7 @@ class ExchangeViewModel(
                 }
             }.onFailure {
                 Napier.e(it) { "ExchangeRateViewModel" }
-                // TODO show snackbar
+                sendEvent(Event.FailedToLoadRate)
             }
         }.launchIn(viewModelScope)
     }
@@ -101,7 +101,7 @@ class ExchangeViewModel(
                 }
             }.onFailure {
                 Napier.e(it) { "ExchangeRateViewModel" }
-                // TODO show snackbar
+                sendEvent(Event.FailedToLoadRate)
             }
         }.launchIn(viewModelScope)
     }

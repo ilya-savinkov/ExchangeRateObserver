@@ -23,5 +23,8 @@ object ExchangeUDF {
         data object Swap : Action
     }
 
-    interface Event : UDF.Event
+    interface Event : UDF.Event {
+        data object FailedToLoadAssets : Event
+        data object FailedToLoadRate : Event
+    }
 }
