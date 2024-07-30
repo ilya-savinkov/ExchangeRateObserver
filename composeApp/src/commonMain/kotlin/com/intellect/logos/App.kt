@@ -19,6 +19,7 @@ import org.koin.compose.KoinContext
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun App() {
+    // TODO Добавить splash screen
     AppTheme {
         CompositionLocalProvider(LocalKamelConfig provides kamelConfig) {
             KoinContext {
