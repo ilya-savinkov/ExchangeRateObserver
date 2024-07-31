@@ -3,6 +3,7 @@ package com.intellect.logos
 import android.content.Context
 import com.intellect.logos.presentation.screen.assets.AssetsViewModel
 import com.intellect.logos.presentation.screen.exchange.ExchangeViewModel
+import com.intellect.logos.presentation.screen.settings.SettingsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -15,6 +16,7 @@ actual class KoinInitializer(private val context: Context) {
     actual val viewModelModule: Module = module {
         viewModelOf(::ExchangeViewModel)
         viewModelOf(::AssetsViewModel)
+        viewModelOf(::SettingsViewModel)
     }
 
     actual fun init() {
@@ -28,6 +30,7 @@ actual class KoinInitializer(private val context: Context) {
                 apiModule,
                 exchangeRateModule,
                 assetsModule,
+                settingsModule,
                 viewModelModule
             )
         }

@@ -20,13 +20,15 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+// TODO Add unit tests
+// TODO add detect
 class ExchangeViewModel(
     private val loadAssetsUseCase: LoadAssetsUseCase,
     private val getDefaultAssetsUseCase: GetDefaultAssetsUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
     private val calculateVolumeUseCase: CalculateVolumeUseCase,
     private val getRatesUseCase: GetRatesUseCase,
-    private val exchangeRouter: ExchangeRouter,
+    private val router: ExchangeRouter,
 ) : BaseViewModel<State, Action, Event>(
     initialState = State(
         isLoadingAssets = true,
@@ -111,6 +113,7 @@ class ExchangeViewModel(
             is Action.TapAsset -> tapAsset(action.asset, action.type)
             is Action.TapKey -> tapKey(action.key)
             Action.Swap -> swap()
+            Action.OpenSettings -> router.openSettings()
         }
     }
 
@@ -138,7 +141,7 @@ class ExchangeViewModel(
     private fun tapAsset(asset: Asset, type: Asset.Type) {
         if (currentState.isLoadingAssets) return
 
-        exchangeRouter.openAssets(
+        router.openAssets(
             selectedAsset = asset,
             type = type
         )
