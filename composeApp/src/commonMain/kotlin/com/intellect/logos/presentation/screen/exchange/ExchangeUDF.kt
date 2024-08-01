@@ -21,6 +21,7 @@ object ExchangeUDF {
         data class TapAsset(val asset: Asset, val type: Asset.Type) : Action
         data class TapKey(val key: Key) : Action
         data object Swap : Action
+        data object OpenSettings : Action
     }
 
     interface Event : UDF.Event {

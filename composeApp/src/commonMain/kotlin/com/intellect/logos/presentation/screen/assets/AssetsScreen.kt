@@ -138,6 +138,8 @@ private fun SharedTransitionScope.AssetsContent(
             }
         }
 
+        // TODO add favorite assets
+        // TODO add groups like "Currencies", "Crypto", "Stocks"
         items(
             count = assets.itemCount,
             key = assets.itemKey { it.currency.code }

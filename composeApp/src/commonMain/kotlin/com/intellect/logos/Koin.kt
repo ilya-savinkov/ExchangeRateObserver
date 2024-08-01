@@ -27,8 +27,10 @@ import com.intellect.logos.domain.usecase.volume.CalculateVolumeUseCase
 import com.intellect.logos.domain.usecase.volume.GetVolumeUseCase
 import com.intellect.logos.presentation.router.AssetsRouterImpl
 import com.intellect.logos.presentation.router.ExchangeRouterImpl
+import com.intellect.logos.presentation.router.SettingsRouterImpl
 import com.intellect.logos.presentation.screen.assets.AssetsRouter
 import com.intellect.logos.presentation.screen.exchange.ExchangeRouter
+import com.intellect.logos.presentation.screen.settings.SettingsRouter
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -71,6 +73,10 @@ val assetsModule: Module = module {
     factoryOf(::GetDefaultAssetsUseCase)
     factoryOf(::SetDefaultAssetUseCase)
     factoryOf(::AssetsRouterImpl) bind AssetsRouter::class
+}
+
+val settingsModule: Module = module {
+    factoryOf(::SettingsRouterImpl) bind SettingsRouter::class
 }
 
 val defaultJson: Json = Json {

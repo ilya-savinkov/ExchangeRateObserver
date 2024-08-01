@@ -85,7 +85,7 @@ fun SharedTransitionScope.ExchangeScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        // TODO navigate to settings
+                        viewModel.onAction(Action.OpenSettings)
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,

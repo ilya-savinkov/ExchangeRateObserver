@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class AssetsViewModel(
     private val getAssetsUseCase: GetAssetsUseCase,
     private val setDefaultAssetUseCase: SetDefaultAssetUseCase,
-    private val assetsRouter: AssetsRouter,
+    private val router: AssetsRouter,
     private val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<State, Action, Event>(
     initialState = State(
@@ -42,7 +42,7 @@ class AssetsViewModel(
     override suspend fun reduce(action: Action) = when (action) {
         is Action.TapAsset -> tapAsset(action.asset)
         is Action.Search -> search(action.query)
-        Action.Back -> assetsRouter.close()
+        Action.Back -> router.close()
     }
 
     private suspend fun tapAsset(asset: Asset) {
@@ -51,7 +51,7 @@ class AssetsViewModel(
             type = Asset.Type.valueOf(savedStateHandle.getString(ASSET_TYPE_KEY))
         )
 
-        assetsRouter.close()
+        router.close()
     }
 
     private fun search(query: String) {

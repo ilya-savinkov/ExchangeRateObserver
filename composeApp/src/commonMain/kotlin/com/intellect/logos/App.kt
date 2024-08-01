@@ -11,6 +11,8 @@ import com.intellect.logos.presentation.screen.assets.AssetsScreen
 import com.intellect.logos.presentation.screen.assets.AssetsViewModel
 import com.intellect.logos.presentation.screen.exchange.ExchangeScreen
 import com.intellect.logos.presentation.screen.exchange.ExchangeViewModel
+import com.intellect.logos.presentation.screen.settings.SettingsScreen
+import com.intellect.logos.presentation.screen.settings.SettingsViewModel
 import com.intellect.logos.presentation.theme.AppTheme
 import io.kamel.image.config.LocalKamelConfig
 import org.koin.compose.KoinContext
@@ -47,6 +49,15 @@ fun App() {
                                     savedStateHandle = it.savedStateHandle
                                 ),
                                 animatedVisibilityScope = this
+                            )
+                        }
+
+                        composable(SettingsViewModel.ROUTE) {
+                            SettingsScreen(
+                                viewModel = koinViewModel(
+                                    navController = navController,
+                                    savedStateHandle = it.savedStateHandle
+                                )
                             )
                         }
                     }
