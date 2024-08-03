@@ -1,6 +1,5 @@
 package com.intellect.logos.presentation.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -86,8 +85,11 @@ private val darkScheme: ColorScheme = darkColorScheme(
 )
 
 @Composable
-fun AppTheme(content: @Composable () -> Unit) {
-    val colorScheme by mutableStateOf(if (isSystemInDarkTheme()) darkScheme else lightScheme)
+fun AppTheme(
+    isDarkTheme: Boolean,
+    content: @Composable () -> Unit
+) {
+    val colorScheme by mutableStateOf(if (isDarkTheme) darkScheme else lightScheme)
 
     MaterialTheme(
         colorScheme = colorScheme,
