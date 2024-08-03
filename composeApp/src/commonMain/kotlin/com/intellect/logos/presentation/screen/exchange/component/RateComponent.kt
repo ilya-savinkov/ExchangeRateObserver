@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.intellect.logos.common.presentation.ui.placeholder.PlaceholderBox
-import com.intellect.logos.domain.model.Rate
+import com.intellect.logos.domain.model.exchange.Rate
 
 @Composable
 fun RateComponent(

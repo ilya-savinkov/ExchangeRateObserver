@@ -4,9 +4,10 @@ import androidx.lifecycle.viewModelScope
 import com.intellect.logos.common.format
 import com.intellect.logos.common.presentation.udf.BaseViewModel
 import com.intellect.logos.domain.model.Asset
-import com.intellect.logos.domain.model.Key
-import com.intellect.logos.domain.model.Rate
 import com.intellect.logos.domain.model.empty
+import com.intellect.logos.domain.model.exchange.Key
+import com.intellect.logos.domain.model.exchange.Rate
+import com.intellect.logos.domain.model.exchange.empty
 import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
 import com.intellect.logos.domain.usecase.rates.GetRatesUseCase

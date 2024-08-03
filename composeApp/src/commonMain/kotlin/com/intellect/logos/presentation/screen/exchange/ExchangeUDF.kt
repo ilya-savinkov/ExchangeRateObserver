@@ -2,8 +2,8 @@ package com.intellect.logos.presentation.screen.exchange
 
 import com.intellect.logos.common.presentation.udf.UDF
 import com.intellect.logos.domain.model.Asset
-import com.intellect.logos.domain.model.Key
-import com.intellect.logos.domain.model.Rate
+import com.intellect.logos.domain.model.exchange.Key
+import com.intellect.logos.domain.model.exchange.Rate
 
 object ExchangeUDF {
     data class State(

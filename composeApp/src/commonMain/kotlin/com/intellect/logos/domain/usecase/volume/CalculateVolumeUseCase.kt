@@ -1,7 +1,7 @@
 package com.intellect.logos.domain.usecase.volume
 
 import com.intellect.logos.domain.model.Currency
-import com.intellect.logos.domain.model.Key
+import com.intellect.logos.domain.model.exchange.Key
 import com.intellect.logos.domain.repository.ExchangeRepository
 
 class CalculateVolumeUseCase(private val exchangeRepository: ExchangeRepository) {

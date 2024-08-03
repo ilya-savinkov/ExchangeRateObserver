@@ -1,0 +1,13 @@
+<resources>
+    <string name="exchange">Обмен</string>
+    <string name="settings">Настройки</string>
+    <string name="search">Поиск</string>
+    <string name="clear">Очистить</string>
+    <string name="assets">Активы</string>
+    <string name="back">Назад</string>
+    <string name="swap">Поменять</string>
+    <string name="theme">Тема</string>
+    <string name="language">Язык</string>
+    <string name="failed_to_load_assets">Ошибка загрузки активов</string>
+    <string name="failed_to_load_rate">Ошибка загрузки курса</string>
+</resources>
