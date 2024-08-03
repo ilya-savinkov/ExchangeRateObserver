@@ -10,19 +10,25 @@ import com.intellect.logos.data.datasource.asset.AssetLocalDataSource
 import com.intellect.logos.data.datasource.asset.AssetRemoteDataSource
 import com.intellect.logos.data.datasource.exchange.ExchangeLocalDataSource
 import com.intellect.logos.data.datasource.exchange.ExchangeRemoteDataSource
+import com.intellect.logos.data.datasource.settings.SettingsLocalDataSource
 import com.intellect.logos.data.db.AppDatabase
 import com.intellect.logos.data.db.dao.AssetDao
 import com.intellect.logos.data.db.getRoomDatabase
 import com.intellect.logos.data.repository.AssetsRepositoryImpl
 import com.intellect.logos.data.repository.ExchangeRepositoryImpl
+import com.intellect.logos.data.repository.SettingsRepositoryImpl
 import com.intellect.logos.domain.repository.AssetsRepository
 import com.intellect.logos.domain.repository.ExchangeRepository
+import com.intellect.logos.domain.repository.SettingsRepository
 import com.intellect.logos.domain.usecase.assets.GetAssetUseCase
 import com.intellect.logos.domain.usecase.assets.GetAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.SetDefaultAssetUseCase
 import com.intellect.logos.domain.usecase.rates.GetRatesUseCase
+import com.intellect.logos.domain.usecase.settings.ChangeThemeUseCase
+import com.intellect.logos.domain.usecase.settings.GetDefaultThemeUseCase
+import com.intellect.logos.domain.usecase.settings.GetThemeStateFlowUseCase
 import com.intellect.logos.domain.usecase.volume.CalculateVolumeUseCase
 import com.intellect.logos.domain.usecase.volume.GetVolumeUseCase
 import com.intellect.logos.presentation.router.AssetsRouterImpl
@@ -76,6 +82,11 @@ val assetsModule: Module = module {
 }
 
 val settingsModule: Module = module {
+    singleOf(::SettingsLocalDataSource)
+    singleOf(::SettingsRepositoryImpl) bind SettingsRepository::class
+    factoryOf(::GetDefaultThemeUseCase)
+    factoryOf(::GetThemeStateFlowUseCase)
+    factoryOf(::ChangeThemeUseCase)
     factoryOf(::SettingsRouterImpl) bind SettingsRouter::class
 }
 

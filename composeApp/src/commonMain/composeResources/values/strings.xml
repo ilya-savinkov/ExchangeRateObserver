@@ -6,6 +6,7 @@
     <string name="assets">Assets</string>
     <string name="back">Back</string>
     <string name="swap">Swap</string>
+    <string name="theme">Theme</string>
     <string name="failed_to_load_assets">Failed to load assets</string>
     <string name="failed_to_load_rate">Failed to load rate</string>
 </resources>
