@@ -5,6 +5,9 @@ import com.intellect.logos.domain.model.exchange.Key
 import com.intellect.logos.domain.repository.ExchangeRepository
 
 class CalculateVolumeUseCase(private val exchangeRepository: ExchangeRepository) {
+    companion object {
+        const val MAX_VOLUME_LENGTH = 10
+    }
 
     suspend operator fun invoke(
         volume: String,
@@ -41,7 +44,7 @@ class CalculateVolumeUseCase(private val exchangeRepository: ExchangeRepository)
                     "$prevVolume."
                 }
             }
-        }.take(10).ifEmpty { "0" }
+        }.take(MAX_VOLUME_LENGTH).ifEmpty { "0" }
 
         exchangeRepository.cacheVolume(newVolume)
     }

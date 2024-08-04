@@ -21,7 +21,7 @@ abstract class AppDatabase : RoomDatabase(), DB {
     }
 }
 
-// FIXME: Added a hack to resolve below issue:
+// Added a hack to resolve below issue:
 // Class 'AppDatabase_Impl' is not abstract and does not implement abstract base class member 'clearAllTables'.
 private interface DB {
     fun clearAllTables() {}

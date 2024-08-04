@@ -27,6 +27,8 @@ import org.koin.compose.getKoin
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun App() {
+    // TODO Добавить поддержку планшетов
+    // TODO Добавить поддержку часов
     // TODO Добавить splash screen
 
     KoinContext {

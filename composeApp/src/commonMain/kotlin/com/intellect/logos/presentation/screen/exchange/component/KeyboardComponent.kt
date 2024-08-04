@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,8 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.intellect.logos.domain.model.exchange.Key
-import com.intellect.logos.presentation.theme.CustomIcon
-import com.intellect.logos.presentation.theme.customicon.Backspace
 
 @Composable
 fun KeyboardComponent(
@@ -57,7 +57,7 @@ fun KeyboardComponent(
             NumberKey(key = 0, onClick = onKeyClick, modifier = keyModifier)
 
             IconKey(
-                imageVector = CustomIcon.Backspace,
+                imageVector = Icons.Default.Delete,
                 contentDescription = "Backspace",
                 onClick = { onKeyClick(Key.Backspace) },
                 modifier = keyModifier

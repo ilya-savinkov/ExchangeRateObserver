@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.paging.PagingSource
-import com.intellect.logos.data.datasource.pagingsource.AssetPagingSource
+import com.intellect.logos.data.datasource.asset.pagingsource.AssetPagingSource
 import com.intellect.logos.data.db.dao.AssetDao
 import com.intellect.logos.data.db.entity.AssetEntity
 import com.intellect.logos.domain.model.Asset
