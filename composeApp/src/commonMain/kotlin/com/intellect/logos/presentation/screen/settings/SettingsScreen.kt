@@ -1,8 +1,10 @@
 package com.intellect.logos.presentation.screen.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -25,9 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.intellect.logos.domain.model.Theme
+import com.intellect.logos.domain.model.settings.Language
+import com.intellect.logos.domain.model.settings.Theme
 import exchangerateobserver.composeapp.generated.resources.Res
 import exchangerateobserver.composeapp.generated.resources.back
+import exchangerateobserver.composeapp.generated.resources.language
 import exchangerateobserver.composeapp.generated.resources.settings
 import exchangerateobserver.composeapp.generated.resources.theme
 import org.jetbrains.compose.resources.stringResource
@@ -67,7 +71,6 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsContent(
     state: StateUDF.State,
@@ -79,44 +82,106 @@ private fun SettingsContent(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        var isExpanded by remember { mutableStateOf(false) }
+        ThemeOption(
+            theme = state.theme.name,
+            onAction = onAction
+        )
 
-        ExposedDropdownMenuBox(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LanguageOption(
+            language = state.language.description,
+            onAction = onAction
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ThemeOption(
+    theme: String,
+    onAction: (StateUDF.Action) -> Unit,
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = isExpanded,
+        onExpandedChange = { isExpanded = it }
+    ) {
+        TextField(
+            label = { Text(text = stringResource(Res.string.theme)) },
+            value = theme,
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(
+                    type = MenuAnchorType.PrimaryNotEditable,
+                    enabled = true
+                )
+        )
+
+        ExposedDropdownMenu(
             expanded = isExpanded,
-            onExpandedChange = { isExpanded = it }
+            onDismissRequest = { isExpanded = false }
         ) {
-            TextField(
-                label = { Text(text = stringResource(Res.string.theme)) },
-                value = state.theme.name,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .menuAnchor(
-                        type = MenuAnchorType.PrimaryNotEditable,
-                        enabled = true
-                    )
-            )
-
-            ExposedDropdownMenu(
-                expanded = isExpanded,
-                onDismissRequest = { isExpanded = false }
-            ) {
-                Theme.entries.forEach { theme ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = theme.name)
-                        },
-                        onClick = {
-                            isExpanded = false
-                            onAction(StateUDF.Action.ChangeTheme(theme))
-                        }
-                    )
-                }
+            Theme.entries.forEach { theme ->
+                DropdownMenuItem(
+                    text = {
+                        Text(text = theme.name)
+                    },
+                    onClick = {
+                        isExpanded = false
+                        onAction(StateUDF.Action.ChangeTheme(theme))
+                    }
+                )
             }
         }
+    }
+}
 
-        // TODO Add language switcher
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LanguageOption(
+    language: String,
+    onAction: (StateUDF.Action) -> Unit,
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = isExpanded,
+        onExpandedChange = { isExpanded = it }
+    ) {
+        TextField(
+            label = { Text(text = stringResource(Res.string.language)) },
+            value = language,
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(
+                    type = MenuAnchorType.PrimaryNotEditable,
+                    enabled = true
+                )
+        )
+
+        ExposedDropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }
+        ) {
+            Language.entries.forEach { language ->
+                DropdownMenuItem(
+                    text = {
+                        Text(text = language.description)
+                    },
+                    onClick = {
+                        isExpanded = false
+                        onAction(StateUDF.Action.ChangeLanguage(language))
+                    }
+                )
+            }
+        }
     }
 }

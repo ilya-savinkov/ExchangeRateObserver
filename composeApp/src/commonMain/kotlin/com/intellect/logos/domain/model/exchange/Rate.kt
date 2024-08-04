@@ -1,4 +1,4 @@
-package com.intellect.logos.domain.model
+package com.intellect.logos.domain.model.exchange
 
 import kotlinx.serialization.Serializable
 

@@ -10,8 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.intellect.logos.domain.model.Theme
-import com.intellect.logos.domain.usecase.settings.GetThemeStateFlowUseCase
+import com.intellect.logos.domain.model.settings.Theme
+import com.intellect.logos.domain.usecase.settings.theme.GetThemeStateFlowUseCase
 import com.intellect.logos.presentation.screen.assets.AssetsScreen
 import com.intellect.logos.presentation.screen.assets.AssetsViewModel
 import com.intellect.logos.presentation.screen.exchange.ExchangeScreen

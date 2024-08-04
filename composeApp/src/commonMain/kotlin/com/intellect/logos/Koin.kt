@@ -26,9 +26,12 @@ import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.SetDefaultAssetUseCase
 import com.intellect.logos.domain.usecase.rates.GetRatesUseCase
-import com.intellect.logos.domain.usecase.settings.ChangeThemeUseCase
-import com.intellect.logos.domain.usecase.settings.GetDefaultThemeUseCase
-import com.intellect.logos.domain.usecase.settings.GetThemeStateFlowUseCase
+import com.intellect.logos.domain.usecase.settings.language.ChangeLanguageUseCase
+import com.intellect.logos.domain.usecase.settings.language.GetDefaultLanguageUseCase
+import com.intellect.logos.domain.usecase.settings.language.GetLanguageStateFlowUseCase
+import com.intellect.logos.domain.usecase.settings.theme.ChangeThemeUseCase
+import com.intellect.logos.domain.usecase.settings.theme.GetDefaultThemeUseCase
+import com.intellect.logos.domain.usecase.settings.theme.GetThemeStateFlowUseCase
 import com.intellect.logos.domain.usecase.volume.CalculateVolumeUseCase
 import com.intellect.logos.domain.usecase.volume.GetVolumeUseCase
 import com.intellect.logos.presentation.router.AssetsRouterImpl
@@ -87,6 +90,9 @@ val settingsModule: Module = module {
     factoryOf(::GetDefaultThemeUseCase)
     factoryOf(::GetThemeStateFlowUseCase)
     factoryOf(::ChangeThemeUseCase)
+    factoryOf(::GetDefaultLanguageUseCase)
+    factoryOf(::GetLanguageStateFlowUseCase)
+    factoryOf(::ChangeLanguageUseCase)
     factoryOf(::SettingsRouterImpl) bind SettingsRouter::class
 }
 
