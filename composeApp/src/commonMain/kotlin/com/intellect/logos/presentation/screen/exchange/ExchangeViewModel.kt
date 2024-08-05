@@ -10,7 +10,7 @@ import com.intellect.logos.domain.model.exchange.Rate
 import com.intellect.logos.domain.model.exchange.empty
 import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
-import com.intellect.logos.domain.usecase.rates.GetRatesUseCase
+import com.intellect.logos.domain.usecase.rates.GetRateUseCase
 import com.intellect.logos.domain.usecase.volume.CalculateVolumeUseCase
 import com.intellect.logos.domain.usecase.volume.GetVolumeUseCase
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.Action
@@ -22,13 +22,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 // TODO Add unit tests
-// TODO add detect
 class ExchangeViewModel(
     private val loadAssetsUseCase: LoadAssetsUseCase,
     private val getDefaultAssetsUseCase: GetDefaultAssetsUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
     private val calculateVolumeUseCase: CalculateVolumeUseCase,
-    private val getRatesUseCase: GetRatesUseCase,
+    private val getRateUseCase: GetRateUseCase,
     private val router: ExchangeRouter,
 ) : BaseViewModel<State, Action, Event>(
     initialState = State(
@@ -69,7 +68,7 @@ class ExchangeViewModel(
             val fromAssetName = fromAsset.currency.code
             val toAssetName = toAsset.currency.code
 
-            getRatesUseCase(
+            getRateUseCase(
                 from = fromAssetName,
                 to = toAssetName
             ).onSuccess { rate ->
@@ -92,7 +91,7 @@ class ExchangeViewModel(
 
     private fun subscribeVolume() {
         getVolumeUseCase().onEach { volume ->
-            getRatesUseCase(
+            getRateUseCase(
                 from = currentState.baseAsset.currency.code,
                 to = currentState.quoteAsset.currency.code
             ).onSuccess { rate ->

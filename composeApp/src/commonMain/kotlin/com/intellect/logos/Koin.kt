@@ -25,7 +25,7 @@ import com.intellect.logos.domain.usecase.assets.GetAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.SetDefaultAssetUseCase
-import com.intellect.logos.domain.usecase.rates.GetRatesUseCase
+import com.intellect.logos.domain.usecase.rates.GetRateUseCase
 import com.intellect.logos.domain.usecase.settings.language.ChangeLanguageUseCase
 import com.intellect.logos.domain.usecase.settings.language.GetDefaultLanguageUseCase
 import com.intellect.logos.domain.usecase.settings.language.GetLanguageStateFlowUseCase
@@ -66,7 +66,7 @@ val exchangeRateModule: Module = module {
     singleOf(::ExchangeRemoteDataSource)
     singleOf(::ExchangeLocalDataSource)
     singleOf(::ExchangeRepositoryImpl) bind ExchangeRepository::class
-    factoryOf(::GetRatesUseCase)
+    factoryOf(::GetRateUseCase)
     factoryOf(::CalculateVolumeUseCase)
     factoryOf(::GetVolumeUseCase)
     factoryOf(::ExchangeRouterImpl) bind ExchangeRouter::class

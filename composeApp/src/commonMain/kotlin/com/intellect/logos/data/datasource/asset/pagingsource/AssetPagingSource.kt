@@ -1,4 +1,4 @@
-package com.intellect.logos.data.datasource.pagingsource
+package com.intellect.logos.data.datasource.asset.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

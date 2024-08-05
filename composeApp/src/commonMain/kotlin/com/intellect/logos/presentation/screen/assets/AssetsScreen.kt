@@ -138,6 +138,7 @@ private fun SharedTransitionScope.AssetsContent(
             }
         }
 
+        // TODO add tracking current location
         // TODO add favorite assets
         // TODO add groups like "Currencies", "Crypto", "Stocks"
         items(
