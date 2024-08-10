@@ -71,9 +71,11 @@ class AssetsViewModel(
             .distinctUntilChanged()
             .debounce(500.milliseconds)
             .onEach { query ->
-                // TODO Exclude selected asset from search results
                 // TODO Сортировать по популярности и последним выбранным
-                val assets = getAssetsUseCase(query)
+                val assets = getAssetsUseCase(
+                    query = query,
+                    exclude = state.value.selectedAsset.currency.code
+                )
 
                 setState {
                     copy(
