@@ -10,6 +10,7 @@ import com.intellect.logos.domain.model.exchange.Rate
 import com.intellect.logos.domain.model.exchange.empty
 import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
+import com.intellect.logos.domain.usecase.assets.SwapAssetsUseCase
 import com.intellect.logos.domain.usecase.rates.GetRateUseCase
 import com.intellect.logos.domain.usecase.volume.CalculateVolumeUseCase
 import com.intellect.logos.domain.usecase.volume.GetVolumeUseCase
@@ -17,14 +18,15 @@ import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.Action
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.Event
 import com.intellect.logos.presentation.screen.exchange.ExchangeUDF.State
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 // TODO Add unit tests
 class ExchangeViewModel(
     private val loadAssetsUseCase: LoadAssetsUseCase,
     private val getDefaultAssetsUseCase: GetDefaultAssetsUseCase,
+    private val swapAssetsUseCase: SwapAssetsUseCase,
     private val getVolumeUseCase: GetVolumeUseCase,
     private val calculateVolumeUseCase: CalculateVolumeUseCase,
     private val getRateUseCase: GetRateUseCase,
@@ -55,8 +57,8 @@ class ExchangeViewModel(
                 }
 
                 subscribeAssets()
-                subscribeVolume()
             }.onFailure {
+                // TODO Send all errors to analytics
                 Napier.e(it) { "ExchangeRateViewModel" }
                 sendEvent(Event.FailedToLoadAssets)
             }
@@ -64,41 +66,27 @@ class ExchangeViewModel(
     }
 
     private suspend fun subscribeAssets() {
-        getDefaultAssetsUseCase().onEach { (fromAsset, toAsset) ->
-            val fromAssetName = fromAsset.currency.code
-            val toAssetName = toAsset.currency.code
+        combine(
+            getDefaultAssetsUseCase(),
+            getVolumeUseCase()
+        ) { (baseAsset, quoteAsset), volume ->
+            val baseAssetName = baseAsset.currency.code
+            val quoteAssetName = quoteAsset.currency.code
 
             getRateUseCase(
-                from = fromAssetName,
-                to = toAssetName
+                baseAssetName = baseAssetName,
+                quoteAssetName = quoteAssetName
             ).onSuccess { rate ->
                 setState {
                     copy(
-                        baseAsset = fromAsset,
-                        quoteAsset = toAsset,
+                        baseAsset = baseAsset,
+                        quoteAsset = quoteAsset,
+                        volume = volume,
+                        convertedVolume = (volume.toDouble() * rate).format(2),
                         rate = Rate(
-                            assets = fromAssetName to toAssetName,
+                            assets = baseAssetName to quoteAssetName,
                             volume = rate
                         )
-                    )
-                }
-            }.onFailure {
-                Napier.e(it) { "ExchangeRateViewModel" }
-                sendEvent(Event.FailedToLoadRate)
-            }
-        }.launchIn(viewModelScope)
-    }
-
-    private fun subscribeVolume() {
-        getVolumeUseCase().onEach { volume ->
-            getRateUseCase(
-                from = currentState.baseAsset.currency.code,
-                to = currentState.quoteAsset.currency.code
-            ).onSuccess { rate ->
-                setState {
-                    copy(
-                        volume = volume,
-                        convertedVolume = (volume.toDouble() * rate).format(2)
                     )
                 }
             }.onFailure {
@@ -127,15 +115,9 @@ class ExchangeViewModel(
         )
     }
 
-    private fun swap() {
+    private suspend fun swap() {
         if (currentState.isLoadingAssets) return
-
-        setState {
-            copy(
-                baseAsset = quoteAsset,
-                quoteAsset = baseAsset
-            )
-        }
+        swapAssetsUseCase()
     }
 
     private fun tapAsset(asset: Asset, type: Asset.Type) {

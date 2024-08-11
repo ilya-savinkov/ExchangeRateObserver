@@ -9,5 +9,6 @@ interface AssetsRepository {
     suspend fun getAsset(name: String): Asset
     suspend fun setDefaultAsset(asset: String, type: Asset.Type)
     suspend fun getDefaultAssets(): Flow<Pair<Asset, Asset>>
+    suspend fun swap()
     suspend fun loadAssets(): Result<Unit>
 }

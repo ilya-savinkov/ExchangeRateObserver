@@ -25,6 +25,7 @@ import com.intellect.logos.domain.usecase.assets.GetAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.GetDefaultAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.LoadAssetsUseCase
 import com.intellect.logos.domain.usecase.assets.SetDefaultAssetUseCase
+import com.intellect.logos.domain.usecase.assets.SwapAssetsUseCase
 import com.intellect.logos.domain.usecase.rates.GetRateUseCase
 import com.intellect.logos.domain.usecase.settings.language.ChangeLanguageUseCase
 import com.intellect.logos.domain.usecase.settings.language.GetDefaultLanguageUseCase
@@ -81,6 +82,7 @@ val assetsModule: Module = module {
     factoryOf(::LoadAssetsUseCase)
     factoryOf(::GetDefaultAssetsUseCase)
     factoryOf(::SetDefaultAssetUseCase)
+    factoryOf(::SwapAssetsUseCase)
     factoryOf(::AssetsRouterImpl) bind AssetsRouter::class
 }
 
