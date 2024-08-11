@@ -49,12 +49,16 @@ class AssetsRepositoryImpl(
     }
 
     override suspend fun getDefaultAssets(): Flow<Pair<Asset, Asset>> {
-        return assetLocalDataSource.getDefaultAssets().map { (from, to) ->
+        return assetLocalDataSource.getDefaultAssets().map { (baseAssetName, quoteAssetName) ->
             Pair(
-                assetLocalDataSource.getAsset(from).toDomain(),
-                assetLocalDataSource.getAsset(to).toDomain()
+                assetLocalDataSource.getAsset(baseAssetName).toDomain(),
+                assetLocalDataSource.getAsset(quoteAssetName).toDomain()
             )
         }
+    }
+
+    override suspend fun swap() {
+        assetLocalDataSource.swap()
     }
 
     // TODO Использовать кеш, если данные уже загружены

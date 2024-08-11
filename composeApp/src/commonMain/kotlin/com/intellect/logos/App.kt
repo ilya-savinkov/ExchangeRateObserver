@@ -30,6 +30,7 @@ fun App() {
     // TODO Добавить поддержку планшетов
     // TODO Добавить поддержку часов
     // TODO Добавить splash screen
+    //TODO Add Firebase Crashlytics
 
     KoinContext {
         val theme by getKoin().get<GetThemeStateFlowUseCase>().invoke().collectAsState()
@@ -45,6 +46,7 @@ fun App() {
                 SharedTransitionLayout {
                     val navController = rememberNavController()
 
+                    // TODO Add navigation analytics
                     NavHost(
                         navController = navController,
                         startDestination = ExchangeViewModel.ROUTE

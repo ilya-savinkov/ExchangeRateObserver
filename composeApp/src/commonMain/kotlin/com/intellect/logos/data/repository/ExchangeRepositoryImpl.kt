@@ -18,10 +18,13 @@ class ExchangeRepositoryImpl(
         exchangeLocalDataSource.cacheVolume(volume)
     }
 
-    override suspend fun getRate(from: String, to: String): Result<Double> = runCatching {
+    override suspend fun getRate(
+        baseAssetName: String,
+        quoteAssetName: String
+    ): Result<Double> = runCatching {
         exchangeRemoteDataSource.getRate(
-            from = from,
-            to = to
+            baseAssetName = baseAssetName,
+            quoteAssetName = quoteAssetName
         ).rate
     }
 }

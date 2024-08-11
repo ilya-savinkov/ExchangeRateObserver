@@ -16,8 +16,8 @@ class AssetLocalDataSource(
     private val assetDao: AssetDao,
     private val dataStore: DataStore<Preferences>
 ) {
-    private val assetFromKey: Preferences.Key<String> = stringPreferencesKey("asset_from")
-    private val assetToKey: Preferences.Key<String> = stringPreferencesKey("asset_to")
+    private val baseAssetKey: Preferences.Key<String> = stringPreferencesKey("base_asset")
+    private val quoteAssetKey: Preferences.Key<String> = stringPreferencesKey("quote_asset")
 
     suspend fun saveAssets(assetEntities: List<AssetEntity>) {
         assetDao.upsertAll(assetEntities)
@@ -43,17 +43,27 @@ class AssetLocalDataSource(
     suspend fun setDefaultAsset(asset: String, type: Asset.Type) {
         dataStore.edit {
             when (type) {
-                Asset.Type.Base -> it[assetFromKey] = asset
-                Asset.Type.Quote -> it[assetToKey] = asset
+                Asset.Type.Base -> it[baseAssetKey] = asset
+                Asset.Type.Quote -> it[quoteAssetKey] = asset
             }
+        }
+    }
+
+    suspend fun swap() {
+        dataStore.edit {
+            val baseAssetName = it[baseAssetKey] ?: "EUR"
+            val quoteAssetName = it[quoteAssetKey] ?: "USD"
+
+            it[baseAssetKey] = quoteAssetName
+            it[quoteAssetKey] = baseAssetName
         }
     }
 
     fun getDefaultAssets(): Flow<Pair<String, String>> {
         return dataStore.data.map {
             Pair(
-                it[assetFromKey] ?: "EUR",
-                it[assetToKey] ?: "USD"
+                it[baseAssetKey] ?: "EUR",
+                it[quoteAssetKey] ?: "USD"
             )
         }
     }
