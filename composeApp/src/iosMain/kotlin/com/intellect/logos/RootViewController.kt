@@ -9,7 +9,7 @@ import platform.UIKit.UIViewController
 fun MainViewController(): UIViewController = ComposeUIViewController(
     configure = {
         Napier.base(DebugAntilog())
-        KoinInitializer().init()
+        initKoin()
     }
 ) {
     App()

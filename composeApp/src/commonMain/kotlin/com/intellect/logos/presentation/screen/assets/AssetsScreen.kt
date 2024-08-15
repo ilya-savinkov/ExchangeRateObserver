@@ -3,37 +3,32 @@ package com.intellect.logos.presentation.screen.assets
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import app.cash.paging.compose.collectAsLazyPagingItems
-import app.cash.paging.compose.itemKey
-import com.intellect.logos.presentation.screen.assets.component.AssetItem
+import com.intellect.logos.common.presentation.ui.placeholder.SimplePlaceholderBox
 import exchangerateobserver.composeapp.generated.resources.Res
 import exchangerateobserver.composeapp.generated.resources.assets
 import exchangerateobserver.composeapp.generated.resources.back
-import exchangerateobserver.composeapp.generated.resources.clear
-import exchangerateobserver.composeapp.generated.resources.search
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -77,11 +72,7 @@ fun SharedTransitionScope.AssetsScreen(
     }
 }
 
-@OptIn(
-    ExperimentalFoundationApi::class,
-    ExperimentalMaterial3Api::class,
-    ExperimentalSharedTransitionApi::class
-)
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedTransitionScope.AssetsContent(
     state: AssetsUDF.State,
@@ -89,70 +80,81 @@ private fun SharedTransitionScope.AssetsContent(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier,
 ) {
-    val assets = state.assets.collectAsLazyPagingItems()
+//    val assets = state.assets.collectAsLazyPagingItems()
+//
+//    LazyColumn(
+//        state = rememberLazyListState(),
+//        modifier = modifier
+//    ) {
+//        // TODO add tracking current location
+//        // TODO add favorite assets
+//        // TODO add groups like "Currencies", "Crypto", "Stocks"
+//
+//        when (assets.loadState.refresh) {
+//            LoadState.Loading -> loading()
+//            is LoadState.Error -> error()
+//            is LoadState.NotLoading -> if (assets.itemCount == 0) {
+//                empty()
+//            } else {
+//                items(
+//                    count = assets.itemCount,
+//                    key = assets.itemKey { it.name }
+//                ) {
+//                    val asset = assets[it] ?: return@items
+//
+//                    AssetItem(
+//                        asset = asset,
+//                        searchQuery = state.searchState.query,
+//                        onClick = { onAction(AssetsUDF.Action.TapAsset(asset)) },
+//                        animatedVisibilityScope = animatedVisibilityScope,
+//                        modifier = Modifier.animateItem()
+//                    )
+//                }
+//            }
+//        }
+//    }
+}
 
-    LazyColumn(
-        state = rememberLazyListState(),
-        modifier = modifier
-    ) {
-        stickyHeader {
-            // TODO search currency by photo
-            // TODO Заменить на обычный TextField
-            SearchBar(
-                query = state.searchState.query,
-                onQueryChange = {
-                    onAction(AssetsUDF.Action.Search(it))
-                },
-                onSearch = {},
-                active = false,
-                onActiveChange = {},
-                placeholder = {
-                    Text(stringResource(Res.string.search))
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = stringResource(Res.string.search)
-                    )
-                },
-                trailingIcon = {
-                    if (state.searchState.query.isNotEmpty()) {
-                        IconButton(
-                            onClick = {
-                                onAction(AssetsUDF.Action.Search(""))
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = stringResource(Res.string.clear)
-                            )
-                        }
-                    }
-                },
-                windowInsets = WindowInsets(0.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-
+private fun LazyListScope.loading() {
+    item {
+        Column(
+            modifier = Modifier
+                .fillParentMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            repeat(10) {
+                SimplePlaceholderBox(
+                    height = 100.dp,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
+    }
+}
 
-        // TODO add tracking current location
-        // TODO add favorite assets
-        // TODO add groups like "Currencies", "Crypto", "Stocks"
-        items(
-            count = assets.itemCount,
-            key = assets.itemKey { it.currency.code }
+private fun LazyListScope.error() {
+    item {
+        Box(
+            modifier = Modifier.fillParentMaxSize()
         ) {
-            val asset = assets[it] ?: return@items
+            Text(
+                text = "Error",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+}
 
-            AssetItem(
-                asset = asset,
-                searchQuery = state.searchState.query,
-                onClick = { onAction(AssetsUDF.Action.TapAsset(asset)) },
-                animatedVisibilityScope = animatedVisibilityScope,
-                modifier = Modifier.animateItem()
+private fun LazyListScope.empty() {
+    item {
+        Box(
+            modifier = Modifier.fillParentMaxSize()
+        ) {
+            Text(
+                text = "Empty",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
     }

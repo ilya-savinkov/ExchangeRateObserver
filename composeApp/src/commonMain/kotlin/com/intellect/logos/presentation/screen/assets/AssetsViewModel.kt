@@ -1,9 +1,6 @@
 package com.intellect.logos.presentation.screen.assets
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import com.intellect.logos.common.presentation.navigation.getObject
-import com.intellect.logos.common.presentation.navigation.getString
+import androidx.paging.PagingData
 import com.intellect.logos.common.presentation.udf.BaseViewModel
 import com.intellect.logos.domain.model.Asset
 import com.intellect.logos.domain.usecase.assets.GetAssetsUseCase
@@ -11,32 +8,27 @@ import com.intellect.logos.domain.usecase.assets.SetDefaultAssetUseCase
 import com.intellect.logos.presentation.screen.assets.AssetsUDF.Action
 import com.intellect.logos.presentation.screen.assets.AssetsUDF.Event
 import com.intellect.logos.presentation.screen.assets.AssetsUDF.State
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.flow.flowOf
+import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.InjectedParam
 
+@KoinViewModel
 class AssetsViewModel(
     private val getAssetsUseCase: GetAssetsUseCase,
     private val setDefaultAssetUseCase: SetDefaultAssetUseCase,
     private val router: AssetsRouter,
-    private val savedStateHandle: SavedStateHandle,
+    @InjectedParam private val assetType: Asset.Type,
 ) : BaseViewModel<State, Action, Event>(
     initialState = State(
-        selectedAsset = savedStateHandle.getObject(SELECTED_ASSET_KEY)
+        assets = flowOf(PagingData.empty())
     )
 ) {
-    companion object {
-        const val ROUTE = "assets"
-        const val SELECTED_ASSET_KEY = "selectedAsset"
-        const val ASSET_TYPE_KEY = "assetType"
-    }
-
-    init {
-        subscribeSearch()
+    override suspend fun onInit() {
+        setState {
+            copy(
+                assets = getAssetsUseCase()
+            )
+        }
     }
 
     override suspend fun reduce(action: Action) = when (action) {
@@ -47,8 +39,8 @@ class AssetsViewModel(
 
     private suspend fun tapAsset(asset: Asset) {
         setDefaultAssetUseCase(
-            asset = asset.currency.code,
-            type = Asset.Type.valueOf(savedStateHandle.getString(ASSET_TYPE_KEY))
+            asset = asset.name,
+            type = assetType
         )
 
         router.close()
@@ -62,26 +54,5 @@ class AssetsViewModel(
                 )
             )
         }
-    }
-
-    @OptIn(FlowPreview::class)
-    private fun subscribeSearch() {
-        state
-            .map { it.searchState.query }
-            .distinctUntilChanged()
-            .debounce(500.milliseconds)
-            .onEach { query ->
-                // TODO Сортировать по популярности и последним выбранным
-                val assets = getAssetsUseCase(
-                    query = query,
-                    exclude = state.value.selectedAsset.currency.code
-                )
-
-                setState {
-                    copy(
-                        assets = assets
-                    )
-                }
-            }.launchIn(viewModelScope)
     }
 }

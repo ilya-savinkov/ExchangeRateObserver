@@ -15,9 +15,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
+import org.koin.core.annotation.Provided
+import org.koin.core.annotation.Single
 
+@Single
 class SettingsLocalDataSource(
-    private val dataStore: DataStore<Preferences>
+    @Provided private val dataStore: DataStore<Preferences>
 ) {
     private val themeKey: Preferences.Key<String> = stringPreferencesKey("theme")
     private val languageKey: Preferences.Key<String> = stringPreferencesKey("language")

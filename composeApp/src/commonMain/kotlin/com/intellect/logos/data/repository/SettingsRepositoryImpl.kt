@@ -5,7 +5,9 @@ import com.intellect.logos.domain.model.settings.Language
 import com.intellect.logos.domain.model.settings.Theme
 import com.intellect.logos.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.annotation.Single
 
+@Single(binds = [SettingsRepository::class])
 class SettingsRepositoryImpl(
     private val settingsLocalDataSource: SettingsLocalDataSource
 ) : SettingsRepository {

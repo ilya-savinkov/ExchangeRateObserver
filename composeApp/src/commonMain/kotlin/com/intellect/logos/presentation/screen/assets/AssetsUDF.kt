@@ -4,13 +4,11 @@ import androidx.paging.PagingData
 import com.intellect.logos.common.presentation.udf.UDF
 import com.intellect.logos.domain.model.Asset
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 
 object AssetsUDF {
 
     data class State(
-        val assets: Flow<PagingData<Asset>> = emptyFlow(),
-        val selectedAsset: Asset,
+        val assets: Flow<PagingData<Asset>>,
         val searchState: SearchState = SearchState(),
         val errorState: ErrorState? = null,
     ) : UDF.State {

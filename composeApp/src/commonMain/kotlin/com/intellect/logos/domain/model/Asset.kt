@@ -4,10 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Asset(
-    val icon: String,
-    val currency: Currency,
-    val country: Country,
+    val name: String,
+    val description: String,
+    val icon: String
 ) {
+    val isJPY: Boolean = name == "JPY"
+
     enum class Type {
         Base,
         Quote
@@ -15,7 +17,7 @@ data class Asset(
 }
 
 fun Asset.Companion.empty() = Asset(
-    icon = "",
-    currency = Currency.empty(),
-    country = Country.empty(),
+    name = "",
+    description = "",
+    icon = ""
 )

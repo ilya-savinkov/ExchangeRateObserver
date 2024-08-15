@@ -121,13 +121,12 @@ private fun SharedTransitionScope.ExchangeRateContent(
         // TODO Add third asset
 
         AssetInputComponent(
-            volume = state.volume,
+            volume = state.volume.text,
             asset = state.baseAsset,
             isLoading = state.isLoadingAssets,
             onClick = {
                 onAction(
                     Action.TapAsset(
-                        asset = state.baseAsset,
                         type = Asset.Type.Base
                     )
                 )
@@ -139,7 +138,6 @@ private fun SharedTransitionScope.ExchangeRateContent(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // TODO Добавить анимацию свапа для активов
             Icon(
                 painter = painterResource(Res.drawable.ic_swap),
                 contentDescription = stringResource(Res.string.swap),
@@ -170,7 +168,6 @@ private fun SharedTransitionScope.ExchangeRateContent(
             onClick = {
                 onAction(
                     Action.TapAsset(
-                        asset = state.quoteAsset,
                         type = Asset.Type.Quote
                     )
                 )

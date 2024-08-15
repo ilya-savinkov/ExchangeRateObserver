@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.intellect.logos.domain.model.Asset
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import io.ktor.http.decodeURLPart
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -34,12 +33,12 @@ fun SharedTransitionScope.AssetItem(
         headlineContent = {
             Text(
                 text = buildHighlightAnnotatedString(
-                    fullText = asset.currency.code,
+                    fullText = asset.name,
                     highlightText = searchQuery,
                     highlightColor = MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier.sharedElement(
-                    state = rememberSharedContentState(asset.currency.code),
+                    state = rememberSharedContentState(asset.name),
                     animatedVisibilityScope = animatedVisibilityScope
                 )
             )
@@ -47,7 +46,7 @@ fun SharedTransitionScope.AssetItem(
         supportingContent = {
             Text(
                 text = buildHighlightAnnotatedString(
-                    fullText = asset.currency.description,
+                    fullText = asset.description,
                     highlightText = searchQuery,
                     highlightColor = MaterialTheme.colorScheme.primary
                 )
@@ -55,8 +54,8 @@ fun SharedTransitionScope.AssetItem(
         },
         leadingContent = {
             KamelImage(
-                resource = asyncPainterResource(asset.icon.decodeURLPart()),
-                contentDescription = asset.currency.code,
+                resource = asyncPainterResource(asset.icon),
+                contentDescription = asset.name,
                 modifier = Modifier
                     .size(48.dp)
                     // TODO Анимация только для выбранного элемента

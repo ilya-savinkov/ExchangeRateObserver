@@ -29,23 +29,35 @@ fun PlaceholderBox(
         modifier = modifier
     ) {
         if (it) {
-            val widthModifier = if (width == Dp.Unspecified) {
-                Modifier.fillMaxWidth()
-            } else {
-                Modifier.width(width)
-            }
-
-            Box(
-                modifier = widthModifier
-                    .height(height)
-                    .background(
-                        color = Color.LightGray,
-                        shape = MaterialTheme.shapes.medium
-                    )
-                    .shimmerAnimation()
+            SimplePlaceholderBox(
+                width = width,
+                height = height
             )
         } else {
             content()
         }
     }
+}
+
+@Composable
+fun SimplePlaceholderBox(
+    width: Dp = Dp.Unspecified,
+    height: Dp,
+    modifier: Modifier = Modifier
+) {
+    val widthModifier = if (width == Dp.Unspecified) {
+        modifier.fillMaxWidth()
+    } else {
+        modifier.width(width)
+    }
+
+    Box(
+        modifier = widthModifier
+            .height(height)
+            .background(
+                color = Color.LightGray,
+                shape = MaterialTheme.shapes.medium
+            )
+            .shimmerAnimation()
+    )
 }

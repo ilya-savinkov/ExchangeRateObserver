@@ -13,8 +13,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext.startKoin
+import org.koin.ksp.generated.module
 
 class AndroidApp : Application() {
+    companion object {
+        lateinit var INSTANCE: AndroidApp
+    }
 
     private val getThemeStateFlowUseCase: GetThemeStateFlowUseCase by inject()
     private val getLanguageStateFlowUseCase: GetLanguageStateFlowUseCase by inject()
@@ -23,8 +30,19 @@ class AndroidApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        KoinInitializer(applicationContext).init()
         Napier.base(DebugAntilog())
+
+        startKoin {
+            androidContext(this@AndroidApp)
+            androidLogger()
+
+            modules(
+                platformModule,
+                apiModule,
+                dbModule,
+                AppModule().module
+            )
+        }
 
         getThemeStateFlowUseCase().onEach { theme ->
             AppCompatDelegate.setDefaultNightMode(

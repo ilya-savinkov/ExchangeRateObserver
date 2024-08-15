@@ -15,26 +15,24 @@ import com.intellect.logos.presentation.screen.settings.StateUDF.Event
 import com.intellect.logos.presentation.screen.settings.StateUDF.State
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.koin.android.annotation.KoinViewModel
 
+@KoinViewModel
 class SettingsViewModel(
     private val changeThemeUseCase: ChangeThemeUseCase,
     private val changeLanguageUseCase: ChangeLanguageUseCase,
     private val router: SettingsRouter,
+    private val getThemeStateFlowUseCase: GetThemeStateFlowUseCase,
+    private val getLanguageStateFlowUseCase: GetLanguageStateFlowUseCase,
     getDefaultThemeUseCase: GetDefaultThemeUseCase,
-    getThemeStateFlowUseCase: GetThemeStateFlowUseCase,
     getDefaultLanguageUseCase: GetDefaultLanguageUseCase,
-    getLanguageStateFlowUseCase: GetLanguageStateFlowUseCase,
 ) : BaseViewModel<State, Action, Event>(
     initialState = State(
         theme = getDefaultThemeUseCase(),
         language = getDefaultLanguageUseCase()
     )
 ) {
-    companion object {
-        const val ROUTE = "settings"
-    }
-
-    init {
+    override suspend fun onInit() {
         getThemeStateFlowUseCase().onEach { theme ->
             setState {
                 copy(theme = theme)

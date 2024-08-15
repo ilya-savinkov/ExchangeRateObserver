@@ -5,9 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class AssetEntity(
-    @PrimaryKey val currencyCode: String,
-    val currencyDescription: String,
-    val countryCode: String,
-    val countryDescription: String,
+    val name: String,
+    val description: String,
     val icon: String,
-)
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id: Long = 0
+}

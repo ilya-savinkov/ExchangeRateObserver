@@ -5,10 +5,9 @@ import com.intellect.logos.domain.model.Asset
 import kotlinx.coroutines.flow.Flow
 
 interface AssetsRepository {
-    suspend fun getAssets(query: String): Flow<PagingData<Asset>>
-    suspend fun getAsset(name: String): Asset
+    fun getAssets(): Flow<PagingData<Asset>>
+    suspend fun getAsset(name: String): Result<Asset>
     suspend fun setDefaultAsset(asset: String, type: Asset.Type)
-    suspend fun getDefaultAssets(): Flow<Pair<Asset, Asset>>
+    suspend fun getDefaultAssetsFlow(): Flow<Result<Pair<Asset, Asset>>>
     suspend fun swap()
-    suspend fun loadAssets(): Result<Unit>
 }

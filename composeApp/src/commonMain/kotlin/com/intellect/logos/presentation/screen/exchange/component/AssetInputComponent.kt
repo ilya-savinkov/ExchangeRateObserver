@@ -21,7 +21,6 @@ import com.intellect.logos.common.presentation.ui.placeholder.PlaceholderBox
 import com.intellect.logos.domain.model.Asset
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import io.ktor.http.decodeURLPart
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -53,8 +52,8 @@ fun SharedTransitionScope.AssetInputComponent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 KamelImage(
-                    resource = asyncPainterResource(asset.icon.decodeURLPart()),
-                    contentDescription = asset.currency.code,
+                    resource = asyncPainterResource(asset.icon),
+                    contentDescription = asset.name,
                     modifier = Modifier
                         .size(48.dp)
                         .sharedElement(
@@ -64,11 +63,11 @@ fun SharedTransitionScope.AssetInputComponent(
                 )
 
                 Text(
-                    text = asset.currency.code,
+                    text = asset.name,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier.sharedElement(
-                        state = rememberSharedContentState(asset.currency.code),
+                        state = rememberSharedContentState(asset.name),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
                 )

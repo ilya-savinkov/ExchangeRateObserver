@@ -1,30 +1,33 @@
+@file:Suppress("EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE")
+
 package com.intellect.logos.data.db
 
+import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.intellect.logos.data.db.dao.AssetDao
+import com.intellect.logos.data.db.dao.RateDao
 import com.intellect.logos.data.db.entity.AssetEntity
+import com.intellect.logos.data.db.entity.RateEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
+expect object MyDatabaseConstructor : RoomDatabaseConstructor<AppDatabase>
+
 @Database(
-    entities = [AssetEntity::class],
-    version = 1
+    entities = [
+        AssetEntity::class,
+        RateEntity::class
+    ],
+    version = 1,
+    exportSchema = true
 )
-abstract class AppDatabase : RoomDatabase(), DB {
-
+@ConstructedBy(MyDatabaseConstructor::class)
+abstract class AppDatabase : RoomDatabase() {
     abstract fun assetDao(): AssetDao
-
-    override fun clearAllTables() {
-        super.clearAllTables()
-    }
-}
-
-// Added a hack to resolve below issue:
-// Class 'AppDatabase_Impl' is not abstract and does not implement abstract base class member 'clearAllTables'.
-private interface DB {
-    fun clearAllTables() {}
+    abstract fun rateDao(): RateDao
 }
 
 fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase {

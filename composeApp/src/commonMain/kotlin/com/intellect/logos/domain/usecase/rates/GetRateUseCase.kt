@@ -1,7 +1,9 @@
 package com.intellect.logos.domain.usecase.rates
 
 import com.intellect.logos.domain.repository.ExchangeRepository
+import org.koin.core.annotation.Factory
 
+@Factory
 class GetRateUseCase(private val exchangeRepository: ExchangeRepository) {
 
     suspend operator fun invoke(

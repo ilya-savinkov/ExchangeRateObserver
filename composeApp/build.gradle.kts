@@ -1,6 +1,7 @@
-import com.google.devtools.ksp.gradle.KspTaskMetadata
+import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -51,6 +52,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.compose.runtime.tracing)
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
@@ -59,6 +61,8 @@ kotlin {
 
         commonMain.dependencies {
             implementation(libs.kotlin.coroutines.core)
+            implementation(libs.kotlin.serialization)
+            implementation(libs.kotlin.date.time)
             implementation(libs.napier)
 
             implementation(compose.runtime)
@@ -76,20 +80,35 @@ kotlin {
             implementation(project.dependencies.platform(libs.koin.bom))
             api(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.viewmodel.navigation)
+            implementation(libs.koin.annotations)
             implementation(libs.compose.navigation)
+            implementation(libs.compose.paging)
             implementation(libs.kamel)
 
             implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.paging.common)
 
             implementation(libs.datastore)
             implementation(libs.datastore.preferences)
 
             implementation(libs.room.runtime)
+            implementation(libs.room.paging)
             implementation(libs.sqlite.bundled)
 
             implementation(projects.shared)
         }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+
+            @OptIn(ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
+        }
+    }
+
+    sourceSets.named("commonMain").configure {
+        kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
     }
 }
 
@@ -132,7 +151,17 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
+
     dependencies {
+        testImplementation(libs.kotest.runner)
+        testImplementation(libs.kotest.assertions)
+        testImplementation(libs.kotest.property)
+        testImplementation(libs.mockk)
         debugImplementation(libs.compose.ui.tooling)
     }
 }
@@ -141,12 +170,29 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
-dependencies {
-    kspCommonMainMetadata(libs.room.compiler)
+ksp {
+    arg("room.incremental", "true")
+    arg("room.generateKotlin", "true")
+    arg("KOIN_CONFIG_CHECK", "true")
+    arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
 }
 
-kotlin.sourceSets.commonMain {
-    tasks.withType<KspTaskMetadata> {
-        kotlin.srcDir(destinationDirectory)
+dependencies {
+    ksp(libs.koin.ksp.compiler)
+    kspCommonMainMetadata(libs.koin.ksp.compiler)
+
+    listOf(
+        "kspAndroid",
+        "kspIosSimulatorArm64",
+        "kspIosX64",
+        "kspIosArm64"
+    ).forEach {
+        add(it, libs.room.compiler)
+    }
+}
+
+project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+    if (name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
     }
 }
