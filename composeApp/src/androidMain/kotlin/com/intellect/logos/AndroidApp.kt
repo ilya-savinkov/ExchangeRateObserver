@@ -10,39 +10,30 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.GlobalContext.startKoin
+import org.koin.androix.startup.KoinStartup
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.dsl.KoinConfiguration
+import org.koin.dsl.koinConfiguration
 import org.koin.ksp.generated.module
 
-class AndroidApp : Application() {
-    companion object {
-        lateinit var INSTANCE: AndroidApp
-    }
+@OptIn(KoinExperimentalAPI::class)
+class AndroidApp : Application(), KoinStartup {
 
     private val getThemeStateFlowUseCase: GetThemeStateFlowUseCase by inject()
     private val getLanguageStateFlowUseCase: GetLanguageStateFlowUseCase by inject()
 
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main.immediate)
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     override fun onCreate() {
         super.onCreate()
+        // TODO Send all errors to analytics
         Napier.base(DebugAntilog())
-
-        startKoin {
-            androidContext(this@AndroidApp)
-            androidLogger()
-
-            modules(
-                platformModule,
-                apiModule,
-                dbModule,
-                AppModule().module
-            )
-        }
 
         getThemeStateFlowUseCase().onEach { theme ->
             AppCompatDelegate.setDefaultNightMode(
@@ -57,5 +48,17 @@ class AndroidApp : Application() {
         getLanguageStateFlowUseCase().onEach { language ->
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(language.code))
         }.launchIn(scope)
+    }
+
+    override fun onKoinStartup(): KoinConfiguration = koinConfiguration {
+        androidContext(this@AndroidApp)
+        androidLogger()
+
+        modules(
+            platformModule,
+            apiModule,
+            dbModule,
+            AppModule().module
+        )
     }
 }

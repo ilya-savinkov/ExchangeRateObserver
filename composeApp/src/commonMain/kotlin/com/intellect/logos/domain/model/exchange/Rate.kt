@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Rate(
     val assets: Pair<String, String>,
-    val volume: Double,
+    val value: Double,
 )
 
 fun Rate.Companion.empty() = Rate(
     assets = "" to "",
-    volume = 0.0,
+    value = 0.0,
 )

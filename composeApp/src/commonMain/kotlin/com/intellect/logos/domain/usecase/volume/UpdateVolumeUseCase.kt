@@ -53,11 +53,13 @@ class UpdateVolumeUseCase(private val exchangeRepository: ExchangeRepository) {
                     "$prevVolume."
                 }
             }
-        }.take(MAX_VOLUME_LENGTH).ifEmpty { "0" }
+        }.take(MAX_VOLUME_LENGTH)
+            .ifEmpty { "0" }
+            .toDouble()
 
         exchangeRepository.cacheVolume(
             volume.copy(
-                value = newVolume.toDouble(),
+                value = newVolume,
                 text = newVolume.format()
             )
         )

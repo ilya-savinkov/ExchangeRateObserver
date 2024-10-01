@@ -12,8 +12,7 @@ version = "1.0.0"
 
 application {
     mainClass.set("com.intellect.logos.ApplicationKt")
-    applicationDefaultJvmArgs =
-        listOf("-Dio.ktor.development=${extra["io.ktor.development"] ?: "false"}")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=${extra["io.ktor.development"] ?: "false"}")
 }
 
 ksp {
@@ -48,6 +47,6 @@ dependencies {
 
     implementation(libs.ktor.serialization.kotlinx.json)
 
-    testImplementation(libs.ktor.server.tests)
+//    testImplementation(libs.ktor.server.tests)
     testImplementation(libs.kotlin.test.junit)
 }

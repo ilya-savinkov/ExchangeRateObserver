@@ -54,7 +54,7 @@ fun SharedTransitionScope.AssetItem(
         },
         leadingContent = {
             KamelImage(
-                resource = asyncPainterResource(asset.icon),
+                resource = { asyncPainterResource(asset.icon) },
                 contentDescription = asset.name,
                 modifier = Modifier
                     .size(48.dp)

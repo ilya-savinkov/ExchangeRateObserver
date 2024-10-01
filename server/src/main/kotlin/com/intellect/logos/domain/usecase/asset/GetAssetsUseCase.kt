@@ -7,7 +7,7 @@ import response.AssetResponse
 @Factory
 class GetAssetsUseCase(private val assetRepository: AssetRepository) {
 
-    operator fun invoke(page: Long, pageSize: Int): List<AssetResponse> {
+    operator fun invoke(page: Long, pageSize: Int): Result<List<AssetResponse>> {
         return assetRepository.getAssets(
             page = page,
             pageSize = pageSize

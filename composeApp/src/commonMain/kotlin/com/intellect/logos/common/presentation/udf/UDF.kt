@@ -4,4 +4,5 @@ object UDF {
     interface Action
     interface Event
     interface State
+    interface Model
 }

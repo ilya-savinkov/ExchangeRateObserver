@@ -21,6 +21,8 @@ object AssetsUDF {
         )
     }
 
+    data object Model : UDF.Model
+
     sealed interface Action : UDF.Action {
         data class TapAsset(val asset: Asset) : Action
         data class Search(val query: String) : Action

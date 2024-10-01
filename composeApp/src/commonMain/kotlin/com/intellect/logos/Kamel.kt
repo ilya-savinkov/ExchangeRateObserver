@@ -1,20 +1,20 @@
 package com.intellect.logos
 
 import io.github.aakira.napier.Napier
+import io.kamel.core.config.Core
 import io.kamel.core.config.DefaultHttpCacheSize
 import io.kamel.core.config.KamelConfig
-import io.kamel.core.config.httpFetcher
+import io.kamel.core.config.httpUrlFetcher
 import io.kamel.core.config.takeFrom
-import io.kamel.image.config.Default
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 
 val kamelConfig: KamelConfig = KamelConfig {
-    takeFrom(KamelConfig.Default)
+    takeFrom(KamelConfig.Core)
     svgCacheSize = 300
 
-    httpFetcher {
+    httpUrlFetcher {
         httpCache(DefaultHttpCacheSize)
 
         Logging {

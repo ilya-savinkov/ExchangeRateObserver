@@ -4,11 +4,13 @@ import com.intellect.logos.common.presentation.udf.UDF
 import com.intellect.logos.domain.model.settings.Language
 import com.intellect.logos.domain.model.settings.Theme
 
-object StateUDF {
+object SettingsUDF {
     data class State(
         val theme: Theme,
         val language: Language
     ) : UDF.State
+
+    data object Model : UDF.Model
 
     sealed interface Action : UDF.Action {
         data class ChangeTheme(val theme: Theme) : Action

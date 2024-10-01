@@ -1,4 +1,4 @@
-package com.intellect.logos.presentation.screen.exchange.component
+package com.intellect.logos.presentation.screen.exchange.component.keyboard
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.intellect.logos.domain.model.exchange.Key
 
 @Composable
-fun KeyboardComponent(
-    onKeyClick: (Key) -> Unit,
+fun KeyboardComposable(
+    component: KeyboardComponent,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -35,31 +35,36 @@ fun KeyboardComponent(
             .clip(CircleShape)
 
         KeysRow {
-            NumberKey(key = 1, onClick = onKeyClick, modifier = keyModifier)
-            NumberKey(key = 2, onClick = onKeyClick, modifier = keyModifier)
-            NumberKey(key = 3, onClick = onKeyClick, modifier = keyModifier)
+            NumberKey(key = 1, onAction = component::onAction, modifier = keyModifier)
+            NumberKey(key = 2, onAction = component::onAction, modifier = keyModifier)
+            NumberKey(key = 3, onAction = component::onAction, modifier = keyModifier)
         }
 
         KeysRow {
-            NumberKey(key = 4, onClick = onKeyClick, modifier = keyModifier)
-            NumberKey(key = 5, onClick = onKeyClick, modifier = keyModifier)
-            NumberKey(key = 6, onClick = onKeyClick, modifier = keyModifier)
+            NumberKey(key = 4, onAction = component::onAction, modifier = keyModifier)
+            NumberKey(key = 5, onAction = component::onAction, modifier = keyModifier)
+            NumberKey(key = 6, onAction = component::onAction, modifier = keyModifier)
         }
 
         KeysRow {
-            NumberKey(key = 7, onClick = onKeyClick, modifier = keyModifier)
-            NumberKey(key = 8, onClick = onKeyClick, modifier = keyModifier)
-            NumberKey(key = 9, onClick = onKeyClick, modifier = keyModifier)
+            NumberKey(key = 7, onAction = component::onAction, modifier = keyModifier)
+            NumberKey(key = 8, onAction = component::onAction, modifier = keyModifier)
+            NumberKey(key = 9, onAction = component::onAction, modifier = keyModifier)
         }
 
         KeysRow {
-            CharKey(key = '.', onClick = { onKeyClick(Key.Dot) }, modifier = keyModifier)
-            NumberKey(key = 0, onClick = onKeyClick, modifier = keyModifier)
+            CharKey(
+                key = '.',
+                onClick = { component.onAction(KeyboardUDF.Action.TapKey(Key.Dot)) },
+                modifier = keyModifier
+            )
+
+            NumberKey(key = 0, onAction = component::onAction, modifier = keyModifier)
 
             IconKey(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Backspace",
-                onClick = { onKeyClick(Key.Backspace) },
+                onClick = { component.onAction(KeyboardUDF.Action.TapKey(Key.Backspace)) },
                 modifier = keyModifier
             )
         }
@@ -81,10 +86,10 @@ private fun KeysRow(rowScope: @Composable RowScope.() -> Unit) {
 @Composable
 private fun NumberKey(
     key: Int,
-    onClick: (Key.Number) -> Unit,
+    onAction: (KeyboardUDF.Action) -> Unit,
     modifier: Modifier
 ) {
-    Box(modifier = modifier.clickable { onClick(Key.Number(key)) }) {
+    Box(modifier = modifier.clickable { onAction(KeyboardUDF.Action.TapKey(Key.Number(key))) }) {
         Text(
             text = key.toString(),
             style = MaterialTheme.typography.displayLarge,

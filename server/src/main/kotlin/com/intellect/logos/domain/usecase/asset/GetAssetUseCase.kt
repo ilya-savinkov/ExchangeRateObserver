@@ -7,7 +7,7 @@ import response.AssetResponse
 @Factory
 class GetAssetUseCase(private val assetRepository: AssetRepository) {
 
-    operator fun invoke(name: String): AssetResponse? {
+    operator fun invoke(name: String): Result<AssetResponse?> {
         return assetRepository.getAsset(name)
     }
 }

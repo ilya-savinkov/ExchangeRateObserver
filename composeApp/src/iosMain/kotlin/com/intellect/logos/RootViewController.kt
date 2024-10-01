@@ -8,6 +8,7 @@ import platform.UIKit.UIViewController
 
 fun MainViewController(): UIViewController = ComposeUIViewController(
     configure = {
+        // TODO Send all errors to analytics
         Napier.base(DebugAntilog())
         initKoin()
     }

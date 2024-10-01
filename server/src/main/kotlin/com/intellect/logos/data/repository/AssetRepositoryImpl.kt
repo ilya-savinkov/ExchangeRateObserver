@@ -10,14 +10,14 @@ class AssetRepositoryImpl(
     private val assetLocalDataSource: AssetLocalDataSource
 ) : AssetRepository {
 
-    override fun getAssets(page: Long, pageSize: Int): List<AssetResponse> {
-        return assetLocalDataSource.getAssets(
+    override fun getAssets(page: Long, pageSize: Int): Result<List<AssetResponse>> = runCatching {
+        assetLocalDataSource.getAssets(
             page = page,
             pageSize = pageSize
         )
     }
 
-    override fun getAsset(name: String): AssetResponse? {
-        return assetLocalDataSource.getAsset(name)
+    override fun getAsset(name: String): Result<AssetResponse?> = runCatching {
+        assetLocalDataSource.getAsset(name)
     }
 }
